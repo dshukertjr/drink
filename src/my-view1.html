@@ -20,18 +20,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
     </style>
+    <firebase-auth 
+      id="auth" 
+      user="{{user}}" 
+      provider="" 
+      status-known="{{statusKnown}}"
+      on-error="handleError">
+    </firebase-auth>
 
     <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+      <h1>Post</h1>
+      <template is="dom-if" if="[[user]]">
+        <h1>Logged in</h1>
+      </template>
+      <template is="dom-if" if="[[!user]]">
+        <h1>not Logged in</h1>
+      </template>
+
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'my-view1',
+      properties:{
+        user:{
+          type: Object
+        },
+        statusKnown:{
+           type: Object
+        }
+      }
     });
   </script>
 </dom-module>

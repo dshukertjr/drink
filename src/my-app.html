@@ -21,6 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../src/my-view1.html">
 <link rel="import" href="../src/my-view2.html">
 <link rel="import" href="my-icons.html">
 
@@ -65,6 +67,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       api-key="AIzaSyBzOoSEui2_rJSxLTSoYWcNpP2bUcO9bpY"
       >
     </firebase-app>
+    <firebase-auth 
+      id="auth" 
+      user="{{user}}" 
+      provider="" 
+      status-known="{{statusKnown}}"
+      on-error="handleError">
+    </firebase-auth>
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
@@ -78,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="view1" href="/view1">View One</a>
-          <a name="view2" href="/view2">View Two</a>
+          <a name="view2" href="/view2">Login</a>
           <a name="view3" href="/view3">View Three</a>
         </iron-selector>
       </app-drawer>
@@ -118,6 +127,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           reflectToAttribute: true,
           observer: '_pageChanged',
         },
+        user:{
+          type: Object
+        },
+        statusKnown:{
+           type: Object
+        }
       },
 
       observers: [
@@ -125,7 +140,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ],
 
       _routePageChanged: function(page) {
-        this.page = page || 'view1';
+        this.page = page || 'view2';
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();

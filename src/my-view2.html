@@ -25,20 +25,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
 
-      this.$.auth.signInWithPopup()
-      .then(function(response) {})
-      .catch(function(error) {});
-
       iron-icon{
         margin-right:12px;
       }
       paper-button.indigo {
         background-color: var(--paper-indigo-500);
         color: white;
-        --paper-button-raised-keyboard-focus: {
-          background-color: var(--paper-pink-a200) !important;
-          color: white !important;
-        };
       }
     </style>
     <firebase-auth 
@@ -50,10 +42,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </firebase-auth>
 
     <div class="card">
-      <template is="dom-if" if="[[user]]">
-        <h1>welcome </h1>
-      </template>
       <h1>Login</h1>
+      <template is="dom-if" if="[[user]]">
+        <h1>Logged in</h1>
+      </template>
+      <template is="dom-if" if="[[!user]]">
+        <h1>not Logged in</h1>
+      </template>
       <paper-input id="email" label="Email" type="email">
         <iron-icon icon="mail" prefix></iron-icon>
       </paper-input>
