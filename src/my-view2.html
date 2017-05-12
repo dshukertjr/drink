@@ -43,12 +43,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="card">
       <h1>Login</h1>
-      <template is="dom-if" if="[[user]]">
-        <h1>Logged in</h1>
-      </template>
-      <template is="dom-if" if="[[!user]]">
-        <h1>not Logged in</h1>
-      </template>
       <paper-input id="email" label="Email" type="email">
         <iron-icon icon="mail" prefix></iron-icon>
       </paper-input>
