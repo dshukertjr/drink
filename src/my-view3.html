@@ -9,29 +9,58 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view3">
   <template>
+    <firebase-auth 
+      id="auth" 
+      user="{{user}}" 
+      provider="" 
+      status-known="{{statusKnown}}"
+      on-error="handleError">
+    </firebase-auth>
+    <firebase-query
+        id="query"
+        path="/users/[[user.uid]]/post"
+        data="{{posts}}">
+    </firebase-query>
     <style include="shared-styles">
       :host {
         display: block;
 
         padding: 10px;
       }
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+      }
     </style>
 
     <div class="card">
-      <div class="circle">3</div>
-      <h1>View Three</h1>
-      <p>Modus commodo minimum eum te, vero utinam assueverit per eu.</p>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.Has at minim mucius aliquam, est id tempor laoreet.Pro saepe pertinax ei, ad pri animal labores suscipiantur.</p>
+      <paper-textarea id="post" label="Write your post here..."></paper-textarea>
+      <paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button>
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'my-view3',
+      properties: {
+        posts: {
+          type: Object
+        }
+      },
+      post: function() {
+        this.$.query.ref.push({
+          content: this.$.post.value
+        });
+        this.$.post.value = null;
+      }
     });
   </script>
 </dom-module>

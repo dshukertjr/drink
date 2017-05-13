@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view1">
@@ -27,15 +29,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       status-known="{{statusKnown}}"
       on-error="handleError">
     </firebase-auth>
-
+    <firebase-query
+        id="query"
+        path="/users/[[user.uid]]/post"
+        data="{{posts}}">
+    </firebase-query>
     <div class="card">
       <h1>Post</h1>
-      <template is="dom-if" if="[[user]]">
-        <h1>Logged in</h1>
-      </template>
-      <template is="dom-if" if="[[!user]]">
-        <h1>not Logged in</h1>
-      </template>
+
+      <ul id="post-list">
+        <template is="dom-repeat" items="[[posts]]" as="post">
+          <li>
+            <p class="content">[[post.content]]</p>
+          </li>
+        </template>
+      </ul>
 
     </div>
   </template>
@@ -49,6 +57,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         statusKnown:{
            type: Object
+        },
+        posts: {
+          type: Object
         }
       }
     });
