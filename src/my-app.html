@@ -63,6 +63,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
         font-weight: bold;
       }
+
+      #tab-nav{
+        position:fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        background:var(--paper-indigo-500);
+        color:#fff;
+      }
+
+      #tab-nav a{
+        color:inherit;
+      }
     </style>
     <firebase-app 
       auth-domain="drink-f8aff.firebaseapp.com" 
@@ -77,6 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       status-known="{{statusKnown}}"
       on-error="handleError">
     </firebase-auth>
+
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
@@ -117,14 +131,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <my-user name="user"></my-user>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
+
+      <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+        <paper-tabs id="tab-nav" selected="1" align-bottom>
+          <paper-tab><a name="view1" href="/view1">Timeline</a></paper-tab>
+          <paper-tab><a name="view2" href="/view2">Login</a></paper-tab>
+          <paper-tab><a name="view3" href="/view3">Post</a></paper-tab>
+          <paper-tab><a name="user" href="/user">User</a></paper-tab>
+        </paper-tabs>
+      </iron-selector> 
+
       </app-header-layout>
       
-      <paper-tabs selected="0" align-bottom>
-        <paper-tab>The first tab</paper-tab>
-        <paper-tab>Tab two</paper-tab>
-        <paper-tab>The third tab</paper-tab>
-        <paper-tab>Fourth tab</paper-tab>
-      </paper-tabs>
     </app-drawer-layout>
 
   </template>
