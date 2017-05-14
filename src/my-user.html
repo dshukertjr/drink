@@ -1,9 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-view1">
+<dom-module id="my-user">
   <template>
     <style include="shared-styles">
       :host {
@@ -19,38 +19,31 @@
       status-known="{{statusKnown}}"
       on-error="handleError">
     </firebase-auth>
-    <firebase-query
-        id="query"
-        path="/posts"
-        data="{{posts}}">
-    </firebase-query>
+    <firebase-document
+      path="/users/[[user.uid]]"
+      data="{{profiles}}">
+    </firebase-document>
     <div class="card">
-      <h1>Post</h1>
-
-      <ul id="post-list">
-        <template is="dom-repeat" items="[[posts]]" as="post">
-          <li>
-            <p class="content">[[post.body]]</p>
-          </li>
-        </template>
-      </ul>
+      <h1>Profile</h1>
+      <paper-textarea id="profileBody" value="{{profiles.name}}" label="User Name"></paper-textarea>
+      <paper-textarea id="profileBody" value="{{profiles.body}}" label="Profile"></paper-textarea>
 
     </div>
   </template>
 
   <script>
     Polymer({
-      is: 'my-view1',
+      is: 'my-user',
       properties:{
         user:{
+          type: Object
+        },
+        profiles:{
           type: Object
         },
         statusKnown:{
            type: Object
         },
-        posts: {
-          type: Object
-        }
       }
     });
   </script>
