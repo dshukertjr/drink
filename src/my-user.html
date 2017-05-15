@@ -24,10 +24,23 @@
       data="{{profiles}}">
     </firebase-document>
     <div class="card">
-      <h1>Profile</h1>
-      <paper-textarea id="profileBody" value="{{profiles.name}}" label="User Name"></paper-textarea>
-      <paper-textarea id="profileBody" value="{{profiles.body}}" label="Profile"></paper-textarea>
-
+      <h1>User</h1>
+      <div hidden$="[[!user]]">
+        <paper-textarea id="profileBody" value="{{profiles.name}}" label="User Name"></paper-textarea>
+        <paper-textarea id="profileBody" value="{{profiles.body}}" label="Profile"></paper-textarea>
+      </div>
+  
+      <div hidden$="[[user]]">
+        <paper-input id="email" label="Email" type="email">
+          <iron-icon icon="mail" prefix></iron-icon>
+        </paper-input>
+        <paper-input id="password" label="Password" type="password">
+          <iron-icon icon="lock" prefix></iron-icon>
+        </paper-input>
+      </div>
+      <paper-button on-tap="login" id="btnLogin" raised class="indigo" hidden$="[[user]]">Log In</paper-button>
+      <paper-button on-tap="signup" id="btnSignUp" raised hidden$="[[user]]">Sign Up</paper-button>
+      <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
     </div>
   </template>
 
@@ -44,6 +57,19 @@
         statusKnown:{
            type: Object
         },
+      },
+      login: function(){
+        const email = this.$.email.value;
+        const password = this.$.password.value;
+        return this.$.auth.signInWithEmailAndPassword(email, password);
+      },
+      logout: function(){
+        return this.$.auth.signOut();
+      },
+      signup: function(){
+        const email = this.$.email.value;
+        const password = this.$.password.value;
+        return this.$.auth.createUserWithEmailAndPassword(email, password);
       }
     });
   </script>
