@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom:0;
         left:0;
         right:0;
-        background:var(--paper-indigo-500);
+        background: var(--app-primary-color);
         color:#fff;
       }
 
@@ -132,12 +132,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <my-view404 name="view404"></my-view404>
         </iron-pages>
 
-      <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-        <paper-tabs id="tab-nav" selected="1" align-bottom>
+<!--       <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+        <paper-tabs id="tab-nav" selected="[[page]]" align-bottom>
           <paper-tab><a name="view1" href="/view1">Timeline</a></paper-tab>
           <paper-tab><a name="view2" href="/view2">Login</a></paper-tab>
           <paper-tab><a name="view3" href="/view3">Post</a></paper-tab>
           <paper-tab><a name="user" href="/user">User</a></paper-tab>
+        </paper-tabs>
+      </iron-selector> 
+ -->
+
+     <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+       <paper-tabs id="tab-nav" selected="[[page]]" attr-for-selected="name" align-bottom>
+          <paper-tab name="view1"><a href="/view1">Timeline</a></paper-tab>
+          <paper-tab name="view2"><a href="/view2">Login</a></paper-tab>
+          <paper-tab name="view3"><a href="/view3">Post</a></paper-tab>
+          <paper-tab name="user"><a href="/user">User</a></paper-tab>
         </paper-tabs>
       </iron-selector> 
 
