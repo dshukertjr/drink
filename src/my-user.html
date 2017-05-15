@@ -1,6 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-user">
@@ -29,7 +32,7 @@
         <paper-textarea id="profileBody" value="{{profiles.name}}" label="User Name"></paper-textarea>
         <paper-textarea id="profileBody" value="{{profiles.body}}" label="Profile"></paper-textarea>
       </div>
-  
+
       <div hidden$="[[user]]">
         <paper-input id="email" label="Email" type="email">
           <iron-icon icon="mail" prefix></iron-icon>
@@ -38,7 +41,7 @@
           <iron-icon icon="lock" prefix></iron-icon>
         </paper-input>
       </div>
-      <paper-button on-tap="login" id="btnLogin" raised class="indigo" hidden$="[[user]]">Log In</paper-button>
+        <paper-button on-tap="login" id="btnLogin" raised class="indigo" hidden$="[[user]]">Log In</paper-button>
       <paper-button on-tap="signup" id="btnSignUp" raised hidden$="[[user]]">Sign Up</paper-button>
       <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
     </div>
