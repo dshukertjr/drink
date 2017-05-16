@@ -1,6 +1,21 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "users": {
+      ".read": "true",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "true",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "posts": {
+      ".read": "true",
+      ".write": " auth != null && newData.child('Uid').val() === auth.uid",
+      "$postid": {
+        ".read": "true",
+        ".write": "auth != null && (data.child('Uid').val() === auth.uid) || !data.exists()",
+	      ".validate": "newData.child('body').val().length > 0"
+      }
+    }
   }
 }

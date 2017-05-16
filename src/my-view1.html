@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="shared-styles.html">
 
@@ -10,6 +12,13 @@
         display: block;
 
         padding: 10px;
+      }
+
+      paper-fab{
+        position:fixed;
+        right:20px;
+        bottom:68px;
+        --paper-fab-keyboard-focus-background:--accent-color;
       }
     </style>
     <firebase-auth 
@@ -36,7 +45,15 @@
       </ul>
 
     </div>
-  </template>
+    <!-- <paper-fab icon="add" on-tap="_openDialog"></paper-fab> -->
+    <a href="/view3"><paper-fab icon="add"></paper-fab></a>
+
+<!--     <paper-dialog always-on-top id="dialog">
+      <paper-textarea id="post" label="Write your post here..."></paper-textarea>
+      <paper-button dialog-dismiss on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button>
+      <paper-button dialog-dismiss>Cancel</paper-button>
+    </paper-dialog>
+ -->  </template>
 
   <script>
     Polymer({
@@ -51,6 +68,16 @@
         posts: {
           type: Object
         }
+      },
+      post: function() {
+        this.$.query.ref.push({
+          "Uid": this.user.uid,
+          "body": this.$.post.value
+        });
+        this.$.post.value = null;
+      },
+      _openDialog: function() {
+        this.$.dialog.open();
       }
     });
   </script>

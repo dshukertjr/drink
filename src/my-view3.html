@@ -25,11 +25,20 @@
 
         padding: 10px;
       }
+
+      a{
+        text-decoration:none;
+      }
+
+      #cancel{
+        color:#000;
+      }
     </style>
 
     <div class="card">
       <paper-textarea id="post" label="Write your post here..."></paper-textarea>
-      <paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button>
+      <a href="/view1"><paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button></a>
+      <a href="/view1"><paper-button id="cancel">Cancel</paper-button></a>
     </div>
   </template>
 
@@ -44,13 +53,13 @@
           type: Object
         }
       },
-      post: function() {
+       post: function() {
         this.$.query.ref.push({
-              Uid: this.user.uid,
-              body: this.$.post.value
-          });
+          "Uid": this.user.uid,
+          "body": this.$.post.value
+        });
         this.$.post.value = null;
       }
-    });
+   });
   </script>
 </dom-module>
