@@ -23,8 +23,6 @@
       paper-spinner-lite{
         margin-left:8px;
         display:none;
-        height:16px;
-        width:16px;
         --paper-spinner-stroke-width: 2px;
       }
 
@@ -37,7 +35,7 @@
       user="{{user}}" 
       provider="" 
       status-known="{{statusKnown}}"
-      on-error="handleError">
+      >
     </firebase-auth>
     <firebase-document
       path="/users/[[user.uid]]"
@@ -58,10 +56,12 @@
           <iron-icon icon="lock" prefix></iron-icon>
         </paper-input>
       </div>
+      <div>
         <paper-button on-tap="login" id="btnLogin" raised class="indigo" hidden$="[[user]]">Log In<paper-spinner-lite active$="[[user]]" id="spinnerLogin"></paper-spinner-lite></paper-button>
-      <paper-button on-tap="signup" id="btnSignUp" raised hidden$="[[user]]">Sign Up<paper-spinner-lite active$="[[user]]" id="spinnerSignUp"></paper-spinner-lite></paper-button>
-      <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
-    </div>
+        <paper-button on-tap="signup" id="btnSignUp" raised hidden$="[[user]]">Sign Up<paper-spinner-lite active$="[[user]]" id="spinnerSignUp"></paper-spinner-lite></paper-button>
+        <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
+      </div>
+      </div>
   </template>
 
   <script>
@@ -83,7 +83,17 @@
         const password = this.$.password.value;
         const spinner = this.$.spinnerLogin;
         spinner.active = true;
-        return this.$.auth.signInWithEmailAndPassword(email, password);
+        this.$.auth.signInWithEmailAndPassword(email, password)
+          .then(function(response) {
+
+          })
+          .catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorMessage);
+            spinner.active = false;
+            this.$.password.value = null;
+          });
       },
       logout: function(){
         return this.$.auth.signOut();
@@ -94,8 +104,18 @@
         // this.$.btnSignUp.
         const spinner = this.$.spinnerSignUp;
         spinner.active = true;
-       return this.$.auth.createUserWithEmailAndPassword(email, password);
-      },
+        this.$.auth.createUserWithEmailAndPassword(email, password)
+          .then(function(response) {
+
+          })
+          .catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorMessage);
+            spinner.active = false;
+            this.$.password.value = null;
+          });
+      }
     });
   </script>
 </dom-module>
