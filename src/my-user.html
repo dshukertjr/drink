@@ -5,6 +5,7 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-user">
@@ -62,6 +63,9 @@
         <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
       </div>
     </div>
+
+    <paper-toast id="toast" text=""></paper-toast>
+
   </template>
 
   <script>
@@ -82,17 +86,19 @@
         const email = this.$.email.value;
         const password = this.$.password.value;
         const spinner = this.$.spinnerLogin;
+        const toast = this.$.toast;
         spinner.active = true;
         this.$.auth.signInWithEmailAndPassword(email, password)
           .then(function(response) {
-
+            toast.show('Logged in!');
           })
           .catch(function(error) {
             var errorCode = error.code;
             var errorMessage = error.message;
-            alert(errorMessage);
+            console.log(errorMessage);
             spinner.active = false;
-            this.$.password.value = null;
+            password.value = null;
+            toast.show(errorMessage);
           });
       },
       logout: function(){
@@ -103,17 +109,18 @@
         const password = this.$.password.value;
         // this.$.btnSignUp.
         const spinner = this.$.spinnerSignUp;
+        const toast = this.$.toast;
         spinner.active = true;
         this.$.auth.createUserWithEmailAndPassword(email, password)
           .then(function(response) {
-
+            toast.show('Welcome! You have created an account with us!');
           })
           .catch(function(error) {
             var errorCode = error.code;
             var errorMessage = error.message;
-            alert(errorMessage);
             spinner.active = false;
-            this.$.password.value = null;
+            password.value = null;
+            toast.show(errorMessage);
           });
       }
     });
