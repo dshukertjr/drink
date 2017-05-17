@@ -22,8 +22,15 @@
         --paper-fab-keyboard-focus-background:--accent-color;
       }
 
+      .choices-wrapper{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:space-between;
+      }
+
       .choice {
         text-transform: none;
+        margin:4px;
       }
 
       #question-list{
@@ -61,12 +68,14 @@
           <li class="question">
             <h3 class="content">[[question.question]]</h3>
             <p>[[question.afterMessage]]</p>
-            <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
-            <paper-button class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
-            <paper-button class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
-            <paper-button class="choice" data-choice="4" raised hidden$="[[!question.choice4]]">[[question.choice4]]</paper-button>
-            <paper-button class="choice" data-choice="5" raised hidden$="[[!question.choice5]]">[[question.choice5]]</paper-button>
-          </li>
+            <div class="choices-wrapper">
+              <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
+              <paper-button on-tap="answer" class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
+              <paper-button on-tap="answer" class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
+              <paper-button on-tap="answer" class="choice" data-choice="4" raised hidden$="[[!question.choice4]]">[[question.choice4]]</paper-button>
+              <paper-button on-tap="answer" class="choice" data-choice="5" raised hidden$="[[!question.choice5]]">[[question.choice5]]</paper-button>
+            </div>
+            </li>
         </template>
       </ul>
 
