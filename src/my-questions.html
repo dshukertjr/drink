@@ -13,6 +13,7 @@
         display: block;
 
         padding: 10px;
+        padding-bottom:84px;
       }
 
       paper-fab{
@@ -23,6 +24,9 @@
       }
 
       .choices-wrapper{
+        display:-webkit-flex;
+        -webkit-flex-wrap:wrap;
+        -webkit-justify-content:space-between;
         display:flex;
         flex-wrap:wrap;
         justify-content:space-between;
@@ -41,6 +45,17 @@
 
       .question{
         list-style-type:none;
+        margin-bottom:16px;
+      }
+
+      @media screen and (min-width:641px){
+        :host{
+          padding-bottom:36px;
+        }
+
+        paper-fab{
+          bottom:20px;
+        }
       }
     </style>
     <firebase-auth 
@@ -51,21 +66,18 @@
       on-error="handleError">
     </firebase-auth>
      <firebase-query
-        id="question-query"
+        id="questionQuery"
         path="/questions"
         data="{{questions}}">
     </firebase-query>
-     <firebase-query
-        id="answer-query"
+<!--      <firebase-query
+        id="answerQuery"
         path="/questions"
         data="{{questions}}">
     </firebase-query>
-    <div class="card">
-      <h1>Questions</h1>
-
-      <ul id="question-list">
+ -->      <ul id="question-list">
         <template is="dom-repeat" items="[[questions]]" as="question">
-          <li class="question">
+          <li class="card question" question="[[question]]">
             <h3 class="content">[[question.question]]</h3>
             <p>[[question.afterMessage]]</p>
             <div class="choices-wrapper">
@@ -79,16 +91,10 @@
         </template>
       </ul>
 
-    </div>
-    <!-- <paper-fab icon="add" on-tap="_openDialog"></paper-fab> -->
+
     <a href="/post"><paper-fab icon="add"></paper-fab></a>
 
-<!--     <paper-dialog always-on-top id="dialog">
-      <paper-textarea id="post" label="Write your post here..."></paper-textarea>
-      <paper-button dialog-dismiss on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button>
-      <paper-button dialog-dismiss>Cancel</paper-button>
-    </paper-dialog>
- -->  </template>
+   </template>
 
   <script>
     Polymer({
@@ -116,7 +122,14 @@
       },
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');
-        console.log(choice);
+        var questionKey = e.target.parentNode.parentNode.question.$key;
+
+        var answer = {
+          Uid : this.user.uid,
+          choice : choice
+        };
+
+        this.$.questionQuery.ref.child(questionKey).child('answers').set(answer);
       }
     });
   </script>
