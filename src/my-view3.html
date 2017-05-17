@@ -37,8 +37,10 @@
 
     <div class="card">
       <paper-textarea id="post" label="Write your post here..."></paper-textarea>
-      <a href="/view1"><paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button></a>
-      <a href="/view1"><paper-button id="cancel">Cancel</paper-button></a>
+      <div class="buttons">
+        <a href="/view1"><paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button></a>
+        <a href="/view1"><paper-button id="cancel">Cancel</paper-button></a>
+      </div>
     </div>
   </template>
 

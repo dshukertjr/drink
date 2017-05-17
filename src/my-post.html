@@ -1,0 +1,119 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-post">
+  <template>
+    <firebase-auth 
+      id="auth" 
+      user="{{user}}" 
+      provider="" 
+      status-known="{{statusKnown}}"
+      on-error="handleError">
+    </firebase-auth>
+    <firebase-query
+        id="query"
+        path="/questions"
+        data="{{posts}}">
+    </firebase-query>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      a{
+        text-decoration:none;
+      }
+
+      #cancel{
+        color:#000;
+      }
+    </style>
+
+    <div class="card">
+      <h1>Post a question</h1>
+      <paper-textarea id="question" label="Question" placeholder="e.g. Warriors or Cavs?"></paper-textarea>
+
+<!--       <paper-button id="revealAfterMessage" on-tap="revealAfterMessage"><iron-icon icon="add" prefix></iron-icon>Message after answering</paper-button>
+      <paper-textarea id="afterMessage" label="Message after answering" placeholder="e.g. I'm a Warriors fan!" hidden="true"></paper-textarea>
+ -->
+      <h2>Choices</h2>
+      <paper-textarea id="choice1" class="choices" label="Choice 1" placeholder="e.g. Warriors!"></paper-textarea>
+      <paper-textarea id="choice2" class="choices" label="Choice 2" placeholder="e.g. Cavs!"></paper-textarea>
+
+      <paper-button id="reveal3" on-tap="reveal3"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-textarea id="choice3" class="choices" label="Choice 3" placeholder="e.g. Wait, I'm a Celtics fan!" hidden="true"></paper-textarea>
+
+      <paper-button id="reveal4" on-tap="reveal4" hidden="true"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-textarea id="choice4" class="choices" label="Choice 4" placeholder="e.g. Other" hidden="true"></paper-textarea>
+
+      <paper-button id="reveal5" on-tap="reveal5" hidden="true"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-textarea id="choice5" class="choices" label="Choice 5" placeholder="e.g. Not a fan of basket ball fan..." hidden="true"></paper-textarea>
+      <div class="buttons">
+        <a href="/view1"><paper-button on-tap="post" id="btnPost" raised class="indigo" hidden$="[[!user]]">Post</paper-button></a>
+        <a href="/view1"><paper-button id="cancel">Cancel</paper-button></a>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-post',
+      properties: {
+        user:{
+          type: Object
+        },
+        posts: {
+          type: Object
+        }
+      },
+       post: function() {
+        var question = {
+          "Uid": this.user.uid,
+          "question": this.$.question.value,
+          "choice1": this.$.choice1.value,
+          "choice2": this.$.choice2.value
+        }
+        if(this.$.afterMessage.value != null) data["afterMessage"] = this.$.afterMessage.value;
+        if(this.$.choice3.value != null) data["choice3"] = this.$.choice3.value;
+        if(this.$.choice4.value != null) data["choice4"] = this.$.choice4.value;
+        if(this.$.choice5.value != null) data["choice5"] = this.$.choice5.value;
+        this.$.query.ref.push(question);
+
+        //emptying the text boxes
+        this.$.question.value = null;
+        this.$.afterMessage.value = null;
+        this.$.choice1.value = null;
+        this.$.choice2.value = null;
+        this.$.choice3.value = null;
+        this.$.choice4.value = null;
+        this.$.choice5.value = null;
+      },
+      revealAfterMessage: function() {
+        this.$.revealAfterMessage.hidden = true;
+        this.$.afterMessage.hidden = false;
+      },
+      reveal3: function() {
+        this.$.choice3.hidden = false;
+        this.$.reveal4.hidden = false;
+        this.$.reveal3.hidden = true;
+      },
+      reveal4: function() {
+        this.$.choice4.hidden = false;
+        this.$.reveal5.hidden = false;
+        this.$.reveal4.hidden = true;
+      },
+      reveal5: function() {
+        this.$.choice5.hidden = false;
+        this.$.reveal5.hidden = true;
+      }
+   });
+  </script>
+</dom-module>

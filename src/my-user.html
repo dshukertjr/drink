@@ -56,12 +56,12 @@
           <iron-icon icon="lock" prefix></iron-icon>
         </paper-input>
       </div>
-      <div>
+      <div class="buttons">
         <paper-button on-tap="login" id="btnLogin" raised class="indigo" hidden$="[[user]]">Log In<paper-spinner-lite active$="[[user]]" id="spinnerLogin"></paper-spinner-lite></paper-button>
         <paper-button on-tap="signup" id="btnSignUp" raised hidden$="[[user]]">Sign Up<paper-spinner-lite active$="[[user]]" id="spinnerSignUp"></paper-spinner-lite></paper-button>
         <paper-button on-tap="logout" id="btnSignUp" raised hidden$="[[!user]]">Sign Out</paper-button>
       </div>
-      </div>
+    </div>
   </template>
 
   <script>

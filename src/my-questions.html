@@ -3,9 +3,10 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-view1">
+<dom-module id="my-questions">
   <template>
     <style include="shared-styles">
       :host {
@@ -20,6 +21,20 @@
         bottom:68px;
         --paper-fab-keyboard-focus-background:--accent-color;
       }
+
+      .choice {
+        text-transform: none;
+      }
+
+      #question-list{
+        list-style-type:none;
+        margin:0;
+        padding:0;
+      }
+
+      .question{
+        list-style-type:none;
+      }
     </style>
     <firebase-auth 
       id="auth" 
@@ -29,17 +44,28 @@
       on-error="handleError">
     </firebase-auth>
      <firebase-query
-        id="query"
-        path="/posts"
-        data="{{posts}}">
+        id="question-query"
+        path="/questions"
+        data="{{questions}}">
+    </firebase-query>
+     <firebase-query
+        id="answer-query"
+        path="/questions"
+        data="{{questions}}">
     </firebase-query>
     <div class="card">
-      <h1>Post</h1>
+      <h1>Questions</h1>
 
-      <ul id="post-list">
-        <template is="dom-repeat" items="[[posts]]" as="post">
-          <li>
-            <p class="content">[[post.body]]</p>
+      <ul id="question-list">
+        <template is="dom-repeat" items="[[questions]]" as="question">
+          <li class="question">
+            <h3 class="content">[[question.question]]</h3>
+            <p>[[question.afterMessage]]</p>
+            <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
+            <paper-button class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
+            <paper-button class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
+            <paper-button class="choice" data-choice="4" raised hidden$="[[!question.choice4]]">[[question.choice4]]</paper-button>
+            <paper-button class="choice" data-choice="5" raised hidden$="[[!question.choice5]]">[[question.choice5]]</paper-button>
           </li>
         </template>
       </ul>
@@ -57,7 +83,7 @@
 
   <script>
     Polymer({
-      is: 'my-view1',
+      is: 'my-questions',
       properties:{
         user:{
           type: Object
@@ -78,6 +104,10 @@
       },
       _openDialog: function() {
         this.$.dialog.open();
+      },
+      answer: function(e) {
+        var choice = e.target.getAttribute('data-choice');
+        console.log(choice);
       }
     });
   </script>
