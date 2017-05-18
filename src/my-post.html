@@ -18,8 +18,7 @@
     </firebase-auth>
     <firebase-query
         id="query"
-        path="/questions"
-        data="{{posts}}">
+        path="/questions">
     </firebase-query>
     <style include="shared-styles">
       :host {
@@ -81,7 +80,7 @@
           "choice1": this.$.choice1.value,
           "choice2": this.$.choice2.value
         }
-        if(this.$.afterMessage.value != null) data["afterMessage"] = this.$.afterMessage.value;
+        // if(this.$.afterMessage.value != null) data["afterMessage"] = this.$.afterMessage.value;
         if(this.$.choice3.value != null) data["choice3"] = this.$.choice3.value;
         if(this.$.choice4.value != null) data["choice4"] = this.$.choice4.value;
         if(this.$.choice5.value != null) data["choice5"] = this.$.choice5.value;
@@ -89,7 +88,7 @@
 
         //emptying the text boxes
         this.$.question.value = null;
-        this.$.afterMessage.value = null;
+        // this.$.afterMessage.value = null;
         this.$.choice1.value = null;
         this.$.choice2.value = null;
         this.$.choice3.value = null;
