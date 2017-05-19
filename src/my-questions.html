@@ -81,7 +81,6 @@
       id="questionQuery"
       path="/questions"
       limit-to-last="15"
-      order-by-key="$key"
       data="{{questions}}">
     </firebase-query>
 
@@ -93,7 +92,7 @@
  -->
       <ul id="question-list">
         <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
-          <li class="card question" question="[[question]]">
+          <li class="card question" data-key="[[question.$key]]" question="[[question]]">
             <h3 class="content">[[question.question]]</h3>
             <p hidden$="[[question]]">[[question.afterMessage]]</p>
             <div class="choices-wrapper">
@@ -142,10 +141,11 @@
       },
       _computeSort: function(a, b) {
         // http://stackoverflow.com/questions/33953938/polymer-1-0-sorting-dom-repeat
-        if (a.__firebaseKey__ == b.__firebaseKey__) {
+        console.log(a.$key);
+        if (a.$key == b.$key) {
           return 0;
         }
-        return a.__firebaseKey__ > b.__firebaseKey__ ? -1 : 1;
+        return a.$key > b.$key ? -1 : 1;
       },
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');
