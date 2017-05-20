@@ -29,10 +29,15 @@
     "iron-a11y-announcer": "PolymerElements/iron-a11y-announcer#^2.0.0",
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^2.0.0",
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
-    "paper-toast": "PolymerElements/paper-toast#^2.0.0"
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
+    "multi-chart": "PolymerEl/multi-chart#^0.7.5",
+    "nvd3-elements": "saeidzebardast/nvd3-elements#^0.21.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+    "d3": "4.x"
+  }
 }

@@ -6,7 +6,7 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-questions">
+<dom-module id="question">
   <template>
     <style include="shared-styles">
       :host {
@@ -47,10 +47,6 @@
         margin-bottom:16px;
       }
 
-      *[hidden]{
-        display:none;
-      }
-
       paper-spinner[active] {
         display: block;
         margin:120px auto 0 auto;
@@ -81,24 +77,14 @@
         <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
           <li class="card question" data-key="[[question.$key]]" question="[[question]]">
             <h3 class="content">[[question.question]]</h3>
-            <p hidden$="[[!_checkAnswered(question)]]">[[question.afterMessage]]</p>
-
-            <div class="choices-wrapper" hidden$="[[_checkAnswered(question)]]">
+            <p hidden$="_checkAnswered(question)">[[question.afterMessage]]</p>
+            <div class="choices-wrapper">
               <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
               <paper-button on-tap="answer" class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
               <paper-button on-tap="answer" class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
               <paper-button on-tap="answer" class="choice" data-choice="4" raised hidden$="[[!question.choice4]]">[[question.choice4]]</paper-button>
               <paper-button on-tap="answer" class="choice" data-choice="5" raised hidden$="[[!question.choice5]]">[[question.choice5]]</paper-button>
             </div>
-
-            <div hidden$="[[!_checkAnswered(question)]]">
-              <p hidden$="[[!question.choice1]]">[[_countChoice(question, 1)]]</p>
-              <p hidden$="[[!question.choice2]]">[[_countChoice(question, 2)]]</p>
-              <p hidden$="[[!question.choice3]]">[[_countChoice(question, 3)]]</p>
-              <p hidden$="[[!question.choice4]]">[[_countChoice(question, 4)]]</p>
-              <p hidden$="[[!question.choice5]]">[[_countChoice(question, 5)]]</p>
-            </div>
-
           </li>
         </template>
       </ul>
@@ -111,7 +97,7 @@
 
   <script>
     Polymer({
-      is: 'my-questions',
+      is: 'question',
       properties:{
         user:{
           type: Object
@@ -145,45 +131,9 @@
       },
       _checkAnswered: function(question){
         const uid = this.user.uid;
-
-        //check if the question has answers at all
-        if(!question.hasOwnProperty('answers')) return false;
-
-        //check if this user has answered it
-        if(question.answers.hasOwnProperty(uid)) return true;
-
-        return false;
-      },
-      // _countChoice: function(question){
-      //   var answers = Object;
-      //   const uid = this.user.uid;
-      //   for(var choice=1;choice<6;choice++){
-      //     var choiceKey = 'choice' + choice;
-      //     //check if the question has answers at all
-      //     if(!question.hasOwnProperty('answers')) return answers;
-      //     if(!question.hasOwnProperty(choiceKey)) answers[choiceKey] = 0;
-      //     else{
-      //       var count = 0;
-      //         Object.keys(question.answers).forEach(function (key) {
-      //           if(question.answers[key].choice == choice) count++;
-      //         });
-      //         answers[choiceKey] = count;
-      //       }
-      //     }
-      //     return answers;
-      // },
-      _countChoice: function(question, choice){
-        const uid = this.user.uid;
-        const choiceKey = 'choice' + choice;
-        //check if the question has answers at all
-        if(!question.hasOwnProperty('answers')) return 0;
-        if(!question.hasOwnProperty(choiceKey)) return 0;
-
-        var count = 0;
-        Object.keys(question.answers).forEach(function (key) {
-          if(question.answers[key].choice == choice) count++;
-        });
-        return count;
+        var choice = question.answers[uid];
+        console.log(choice);
+        return true;
       },
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');

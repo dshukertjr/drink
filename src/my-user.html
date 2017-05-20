@@ -102,11 +102,16 @@
           });
       },
       logout: function(){
-        return this.$.auth.signOut();
+        const toast = this.$.toast;
+        this.$.auth.signOut()
+          .then(function(response) {
+            toast.show('Logged out!');
+          });
       },
       signup: function(){
         const email = this.$.email.value;
         const password = this.$.password.value;
+        const passwordInput = this.$.password;
         // this.$.btnSignUp.
         const spinner = this.$.spinnerSignUp;
         const toast = this.$.toast;
@@ -119,7 +124,7 @@
             var errorCode = error.code;
             var errorMessage = error.message;
             spinner.active = false;
-            password.value = null;
+            passwordInput.value = null;
             toast.show(errorMessage);
           });
       }
