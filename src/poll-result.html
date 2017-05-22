@@ -1,0 +1,105 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="poll-result">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+      .choiceBar{
+        padding:4px;
+        background:blue;
+        color:#fff;
+        overflow:hidden;
+        -webkit-transition:width 0.1s;
+        transition:width 0.1s;
+        margin:4px 0;
+      }
+    </style>
+
+    <div class="choiceBar" id="choice1" hidden$="[[!answers.choice1.label]]">
+      <div>
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
+      </div>
+    </div>
+
+    <div class="choiceBar" id="choice2" hidden$="[[!answers.choice2.label]]">
+      <div>
+        <div>[[answers.choice2.label]]</div>
+        <div>[[answers.choice2.value]]</div>
+      </div>
+    </div>
+
+    <div class="choiceBar" id="choice3" hidden$="[[!answers.choice3.label]]">
+      <div>
+        <div>[[answers.choice3.label]]</div>
+        <div>[[answers.choice3.value]]</div>
+      </div>
+    </div>
+
+    <div class="choiceBar" id="choice4" hidden$="[[!answers.choice4.label]]">
+      <div>
+        <div>[[answers.choice4.label]]</div>
+        <div>[[answers.choice4.value]]</div>
+      </div>
+    </div>
+
+    <div class="choiceBar" id="choice5" hidden$="[[!answers.choice5.label]]">
+      <div>
+        <div>[[answers.choice5.label]]</div>
+        <div>[[answers.choice5.value]]</div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'poll-result',
+      properties: {
+        answers: {
+          type: Object,
+          observer: '_computeBarLength'
+        }
+      },
+      _totalAnswer: function() {
+        var count = 0;
+        count += this.answers.choice1.value;
+        count += this.answers.choice2.value;
+        count += this.answers.choice3.value;
+        count += this.answers.choice4.value;
+        count += this.answers.choice5.value;
+        return count;
+      },
+      _computeBarLength: function(){
+        //calculate the length of each choice
+        const answer = this.answers;
+
+
+        // this.$.choice1.style.width = "40%"; 
+        // return;
+        const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
+
+        var choiceLength = answer.choice1.value * 100 / max + "%";
+        this.$.choice1.style.width = choiceLength;
+
+        var choiceLength = answer.choice2.value * 100 / max + "%";
+        this.$.choice2.style.width = choiceLength;
+
+        var choiceLength = answer.choice3.value * 100 / max + "%";
+        this.$.choice3.style.width = choiceLength;
+
+        var choiceLength = answer.choice4.value * 100 / max + "%";
+        this.$.choice4.style.width = choiceLength;
+
+        var choiceLength = answer.choice5.value * 100 / max + "%";
+        this.$.choice5.style.width = choiceLength;
+      }
+   });
+  </script>
+</dom-module>

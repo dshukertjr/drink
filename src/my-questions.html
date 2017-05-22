@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="poll-result.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-questions">
@@ -47,10 +48,6 @@
         margin-bottom:16px;
       }
 
-      *[hidden]{
-        display:none;
-      }
-
       paper-spinner[active] {
         display: block;
         margin:120px auto 0 auto;
@@ -92,11 +89,15 @@
             </div>
 
             <div hidden$="[[!_checkAnswered(question)]]">
-              <p hidden$="[[!question.choice1]]">[[_countChoice(question, 1)]]</p>
+
+              <poll-result answers="[[_computeAnswers(question)]]"></poll-result>
+
+<!--               <p hidden$="[[!question.choice1]]">[[_countChoice(question, 1)]]</p>
               <p hidden$="[[!question.choice2]]">[[_countChoice(question, 2)]]</p>
               <p hidden$="[[!question.choice3]]">[[_countChoice(question, 3)]]</p>
               <p hidden$="[[!question.choice4]]">[[_countChoice(question, 4)]]</p>
               <p hidden$="[[!question.choice5]]">[[_countChoice(question, 5)]]</p>
+ -->
             </div>
 
           </li>
@@ -154,24 +155,6 @@
 
         return false;
       },
-      // _countChoice: function(question){
-      //   var answers = Object;
-      //   const uid = this.user.uid;
-      //   for(var choice=1;choice<6;choice++){
-      //     var choiceKey = 'choice' + choice;
-      //     //check if the question has answers at all
-      //     if(!question.hasOwnProperty('answers')) return answers;
-      //     if(!question.hasOwnProperty(choiceKey)) answers[choiceKey] = 0;
-      //     else{
-      //       var count = 0;
-      //         Object.keys(question.answers).forEach(function (key) {
-      //           if(question.answers[key].choice == choice) count++;
-      //         });
-      //         answers[choiceKey] = count;
-      //       }
-      //     }
-      //     return answers;
-      // },
       _countChoice: function(question, choice){
         const uid = this.user.uid;
         const choiceKey = 'choice' + choice;
@@ -184,6 +167,33 @@
           if(question.answers[key].choice == choice) count++;
         });
         return count;
+      },
+      _computeAnswers: function(question){
+        //create an answer object to pass to result element
+        var answers = {
+          choice1: {
+            value: this._countChoice(question, 1)
+          },
+          choice2: {
+            value: this._countChoice(question, 2)
+          },
+          choice3: {
+            value: this._countChoice(question, 3)
+          },
+          choice4: {
+            value: this._countChoice(question, 4)
+          },
+          choice5: {
+            value: this._countChoice(question, 5)
+          }
+        };
+
+        if(question.choice1) answers.choice1.label = question.choice1;
+        if(question.choice2) answers.choice2.label = question.choice2;
+        if(question.choice3) answers.choice3.label = question.choice3;
+        if(question.choice4) answers.choice4.label = question.choice4;
+        if(question.choice5) answers.choice5.label = question.choice5;
+        return answers;
       },
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');
