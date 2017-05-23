@@ -19,7 +19,8 @@
         transition:width 0.2s;
         margin:4px 0;
         position:relative;
-        border-radius:3px;
+        border-top-right-radius:5px;
+        border-bottom-right-radius:5px;
       }
 
       .barContent, .barContentPlaceholder{
@@ -50,10 +51,12 @@
       <div class="barContent">
         <div>[[answers.choice1.label]]</div>
         <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice1.percent]]%</div>
       </div>
       <div class="barContentPlaceholder">
         <div>[[answers.choice1.label]]</div>
         <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice1.percent]]%</div>
       </div>
     </div>
 
@@ -61,10 +64,12 @@
       <div class="barContent">
         <div>[[answers.choice2.label]]</div>
         <div>[[answers.choice2.value]]</div>
+        <div>[[answers.choice2.percent]]%</div>
       </div>
       <div class="barContentPlaceholder">
-        <div>[[answers.choice1.label]]</div>
-        <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice2.label]]</div>
+        <div>[[answers.choice2.value]]</div>
+        <div>[[answers.choice2.percent]]%</div>
       </div>
     </div>
 
@@ -72,10 +77,12 @@
       <div class="barContent">
         <div>[[answers.choice3.label]]</div>
         <div>[[answers.choice3.value]]</div>
+        <div>[[answers.choice3.percent]]%</div>
       </div>
       <div class="barContentPlaceholder">
-        <div>[[answers.choice1.label]]</div>
-        <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice3.label]]</div>
+        <div>[[answers.choice3.value]]</div>
+        <div>[[answers.choice3.percent]]%</div>
       </div>
     </div>
 
@@ -83,10 +90,12 @@
       <div class="barContent">
         <div>[[answers.choice4.label]]</div>
         <div>[[answers.choice4.value]]</div>
+        <div>[[answers.choice4.percent]]%</div>
       </div>
       <div class="barContentPlaceholder">
-        <div>[[answers.choice1.label]]</div>
-        <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice4.label]]</div>
+        <div>[[answers.choice4.value]]</div>
+        <div>[[answers.choice4.percent]]%</div>
       </div>
     </div>
 
@@ -94,10 +103,12 @@
       <div class="barContent">
         <div>[[answers.choice5.label]]</div>
         <div>[[answers.choice5.value]]</div>
+        <div>[[answers.choice5.percent]]%</div>
       </div>
       <div class="barContentPlaceholder">
-        <div>[[answers.choice1.label]]</div>
-        <div>[[answers.choice1.value]]</div>
+        <div>[[answers.choice5.label]]</div>
+        <div>[[answers.choice5.value]]</div>
+        <div>[[answers.choice5.percent]]%</div>
       </div>
     </div>
 
@@ -112,22 +123,10 @@
           observer: '_computeBarLength'
         }
       },
-      _totalAnswer: function() {
-        var count = 0;
-        count += this.answers.choice1.value;
-        count += this.answers.choice2.value;
-        count += this.answers.choice3.value;
-        count += this.answers.choice4.value;
-        count += this.answers.choice5.value;
-        return count;
-      },
       _computeBarLength: function(){
         //calculate the length of each choice
         const answer = this.answers;
 
-
-        // this.$.choice1.style.width = "40%"; 
-        // return;
         const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
 
         var choiceLength = 0;

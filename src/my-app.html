@@ -91,6 +91,7 @@
           <app-toolbar>
             <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>Demo</div>
+            <div hidden$="[[!user]]">signed in</div>
           </app-toolbar>
         </app-header>
 
@@ -123,11 +124,18 @@
           observer: '_pageChanged',
         },
         user:{
-          type: Object,
+          type: Object
         },
         statusKnown:{
            type: Object
+        },
+        signedIn:{
+           type: Boolean
         }
+      },
+
+      ready: function(){
+        // this.$.auth.signOut();
       },
 
       observers: [
