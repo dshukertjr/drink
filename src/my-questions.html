@@ -215,7 +215,7 @@
         if(!this.user){
           this.$.auth.signInAnonymously()
           .then(function(response){
-            questionQuery.ref.child(questionKey).child('answers').child(user.uid).set(answer);
+            questionQuery.ref.child(questionKey).child('answers').child(response.uid).set(answer);
           });
         }
         else{

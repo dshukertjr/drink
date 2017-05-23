@@ -11,7 +11,6 @@
       }
 
       .choiceBar{
-        width:0%;
         min-width:1px;
         background: var(--app-primary-color);
         color:#fff;
@@ -21,10 +20,20 @@
         position:relative;
         border-top-right-radius:5px;
         border-bottom-right-radius:5px;
+        font-size:0;
       }
 
       .barContent, .barContentPlaceholder{
         padding:4px;
+        display:inline-block;
+        font-size:14px;
+      }
+
+      .barContent>div, .barContentPlaceholder>div{
+        max-width:100%;
+        white-space: nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       .barContentPlaceholder{
@@ -35,10 +44,6 @@
         position:absolute;
         left:100%;
         color:#000;
-      }
-
-      .choiceBar.lessThanHalf .barContent, .choiceBar.lessThanHalf .barContentPlaceholder{
-        min-width:150px;
       }
 
       .choiceBar.lessThanHalf .barContentPlaceholder{
@@ -132,35 +137,47 @@
         var choiceLength = 0;
         var targetChoice = 0;
 
+        //width of the barContent
+        var wordWidth = 0;
+        //width of the inside of a question card
+        this.$.choice1.style.width = "100%";
+        var wrapperWidth = this.$.choice1.clientWidth;
+        console.log(wrapperWidth);
+
         choiceLength = answer.choice1.value * 100 / max;
         targetChoice = this.$.choice1;
         targetChoice.style.width = choiceLength + "%";
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf') && wordWidth > (wrapperWidth * choiceLength /100) ) targetChoice.classList.add('lessThanHalf');
+        else if( (choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
         choiceLength = answer.choice2.value * 100 / max;
         targetChoice = this.$.choice2;
         targetChoice.style.width = choiceLength + "%";
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf') && wordWidth > (wrapperWidth * choiceLength /100) ) targetChoice.classList.add('lessThanHalf');
+        else if( (choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
         choiceLength = answer.choice3.value * 100 / max;
         targetChoice = this.$.choice3;
         targetChoice.style.width = choiceLength + "%";
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf') && wordWidth > (wrapperWidth * choiceLength /100) ) targetChoice.classList.add('lessThanHalf');
+        else if( (choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
         choiceLength = answer.choice4.value * 100 / max;
         targetChoice = this.$.choice4;
         targetChoice.style.width = choiceLength + "%";
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf') && wordWidth > (wrapperWidth * choiceLength /100) ) targetChoice.classList.add('lessThanHalf');
+        else if( (choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
         choiceLength = answer.choice5.value * 100 / max;
         targetChoice = this.$.choice5;
         targetChoice.style.width = choiceLength + "%";
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf') && wordWidth > (wrapperWidth * choiceLength /100) ) targetChoice.classList.add('lessThanHalf');
+        else if( (choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
       }
    });
   </script>
