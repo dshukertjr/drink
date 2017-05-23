@@ -81,9 +81,9 @@
           "choice2": this.$.choice2.value
         }
         // if(this.$.afterMessage.value != null) data["afterMessage"] = this.$.afterMessage.value;
-        if(this.$.choice3.value != null) data["choice3"] = this.$.choice3.value;
-        if(this.$.choice4.value != null) data["choice4"] = this.$.choice4.value;
-        if(this.$.choice5.value != null) data["choice5"] = this.$.choice5.value;
+        if(this.$.choice3.value != null) question["choice3"] = this.$.choice3.value;
+        if(this.$.choice4.value != null) question["choice4"] = this.$.choice4.value;
+        if(this.$.choice5.value != null) question["choice5"] = this.$.choice5.value;
         this.$.query.ref.push(question);
 
         //emptying the text boxes

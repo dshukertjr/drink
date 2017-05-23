@@ -11,48 +11,93 @@
       }
 
       .choiceBar{
-        padding:4px;
-        background:blue;
+        width:0%;
+        min-width:1px;
+        background: var(--app-primary-color);
         color:#fff;
-        overflow:hidden;
-        -webkit-transition:width 0.1s;
-        transition:width 0.1s;
+        -webkit-transition:width 0.2s;
+        transition:width 0.2s;
         margin:4px 0;
+        position:relative;
+        border-radius:3px;
+      }
+
+      .barContent, .barContentPlaceholder{
+        padding:4px;
+      }
+
+      .barContentPlaceholder{
+        display:none;
+      }
+
+      .choiceBar.lessThanHalf .barContent{
+        position:absolute;
+        left:100%;
+        color:#000;
+      }
+
+      .choiceBar.lessThanHalf .barContent, .choiceBar.lessThanHalf .barContentPlaceholder{
+        min-width:150px;
+      }
+
+      .choiceBar.lessThanHalf .barContentPlaceholder{
+        color:transparent;
+        display:block;
       }
     </style>
 
     <div class="choiceBar" id="choice1" hidden$="[[!answers.choice1.label]]">
-      <div>
+      <div class="barContent">
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
+      </div>
+      <div class="barContentPlaceholder">
         <div>[[answers.choice1.label]]</div>
         <div>[[answers.choice1.value]]</div>
       </div>
     </div>
 
     <div class="choiceBar" id="choice2" hidden$="[[!answers.choice2.label]]">
-      <div>
+      <div class="barContent">
         <div>[[answers.choice2.label]]</div>
         <div>[[answers.choice2.value]]</div>
+      </div>
+      <div class="barContentPlaceholder">
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
       </div>
     </div>
 
     <div class="choiceBar" id="choice3" hidden$="[[!answers.choice3.label]]">
-      <div>
+      <div class="barContent">
         <div>[[answers.choice3.label]]</div>
         <div>[[answers.choice3.value]]</div>
+      </div>
+      <div class="barContentPlaceholder">
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
       </div>
     </div>
 
     <div class="choiceBar" id="choice4" hidden$="[[!answers.choice4.label]]">
-      <div>
+      <div class="barContent">
         <div>[[answers.choice4.label]]</div>
         <div>[[answers.choice4.value]]</div>
+      </div>
+      <div class="barContentPlaceholder">
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
       </div>
     </div>
 
     <div class="choiceBar" id="choice5" hidden$="[[!answers.choice5.label]]">
-      <div>
+      <div class="barContent">
         <div>[[answers.choice5.label]]</div>
         <div>[[answers.choice5.value]]</div>
+      </div>
+      <div class="barContentPlaceholder">
+        <div>[[answers.choice1.label]]</div>
+        <div>[[answers.choice1.value]]</div>
       </div>
     </div>
 
@@ -85,20 +130,38 @@
         // return;
         const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
 
-        var choiceLength = answer.choice1.value * 100 / max + "%";
-        this.$.choice1.style.width = choiceLength;
+        var choiceLength = 0;
+        var targetChoice = 0;
 
-        var choiceLength = answer.choice2.value * 100 / max + "%";
-        this.$.choice2.style.width = choiceLength;
+        choiceLength = answer.choice1.value * 100 / max;
+        targetChoice = this.$.choice1;
+        targetChoice.style.width = choiceLength + "%";
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
+        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
-        var choiceLength = answer.choice3.value * 100 / max + "%";
-        this.$.choice3.style.width = choiceLength;
+        choiceLength = answer.choice2.value * 100 / max;
+        targetChoice = this.$.choice2;
+        targetChoice.style.width = choiceLength + "%";
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
+        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
-        var choiceLength = answer.choice4.value * 100 / max + "%";
-        this.$.choice4.style.width = choiceLength;
+        choiceLength = answer.choice3.value * 100 / max;
+        targetChoice = this.$.choice3;
+        targetChoice.style.width = choiceLength + "%";
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
+        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
 
-        var choiceLength = answer.choice5.value * 100 / max + "%";
-        this.$.choice5.style.width = choiceLength;
+        choiceLength = answer.choice4.value * 100 / max;
+        targetChoice = this.$.choice4;
+        targetChoice.style.width = choiceLength + "%";
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
+        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
+
+        choiceLength = answer.choice5.value * 100 / max;
+        targetChoice = this.$.choice5;
+        targetChoice.style.width = choiceLength + "%";
+        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
+        else if(choiceLength > 50 && targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.remove('lessThanHalf');
       }
    });
   </script>
