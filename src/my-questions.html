@@ -23,29 +23,10 @@
         --paper-fab-keyboard-focus-background:--accent-color;
       }
 
-      .choices-wrapper{
-        display:-webkit-flex;
-        -webkit-flex-wrap:wrap;
-        -webkit-justify-content:space-between;
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:space-between;
-      }
-
-      .choice {
-        text-transform: none;
-        margin:4px;
-      }
-
       #question-list{
         list-style-type:none;
         margin:0;
         padding:0;
-      }
-
-      .question{
-        list-style-type:none;
-        margin-bottom:16px;
       }
 
       paper-spinner[active] {
@@ -76,23 +57,7 @@
 
     <ul id="question-list">
       <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
-        <li id="[[question.$key]]" class="card question" data-key="[[question.$key]]" question="[[question]]">
-          <h3 class="content">[[question.question]]</h3>
-          <p hidden$="[[!_checkAnswered(question)]]">[[question.afterMessage]]</p>
-
-          <div class="choices-wrapper" hidden$="[[_checkAnswered(question)]]">
-            <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
-            <paper-button on-tap="answer" class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
-            <paper-button on-tap="answer" class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
-            <paper-button on-tap="answer" class="choice" data-choice="4" raised hidden$="[[!question.choice4]]">[[question.choice4]]</paper-button>
-            <paper-button on-tap="answer" class="choice" data-choice="5" raised hidden$="[[!question.choice5]]">[[question.choice5]]</paper-button>
-          </div>
-
-          <div hidden$="[[!_checkAnswered(question)]]">
-            <poll-result answers="[[_computeAnswers(question)]]"></poll-result>
-          </div>
-
-        </li>
+        <poll-result questionkey="[[question.$key]]"></poll-result>
       </template>
     </ul>
 
@@ -125,102 +90,13 @@
           spinner.removeAttribute('active');
         });
       },
+
       _computeSort: function(a, b) {
         // http://stackoverflow.com/questions/33953938/polymer-1-0-sorting-dom-repeat
         if (a.$key == b.$key) {
           return 0;
         }
         return a.$key > b.$key ? -1 : 1;
-      },
-      _checkAnswered: function(question){
-        if(!this.user) return false;
-
-        const uid = this.user.uid;
-
-        //check if the question has answers at all
-        if(!question.hasOwnProperty('answers')) return false;
-
-        //check if this user has answered it
-        if(question.answers.hasOwnProperty(uid)) return true;
-
-        return false;
-      },
-      _countChoice: function(question, choice){
-        const choiceKey = 'choice' + choice;
-        //check if the question has answers at all
-        if(!question.hasOwnProperty('answers')) return 0;
-        if(!question.hasOwnProperty(choiceKey)) return 0;
-
-        var count = 0;
-        Object.keys(question.answers).forEach(function (key) {
-          if(question.answers[key].choice == choice) count++;
-        });
-        return count;
-      },
-      _computeAnswers: function(question){
-        //create an answer object to pass to result element
-        var total = this._countChoice(question, 1) + this._countChoice(question, 2) + this._countChoice(question, 3) + this._countChoice(question, 4) + this._countChoice(question, 5);
-
-        var answers = {
-          choice1: {
-            value: this._countChoice(question, 1)
-          },
-          choice2: {
-            value: this._countChoice(question, 2)
-          },
-          choice3: {
-            value: this._countChoice(question, 3)
-          },
-          choice4: {
-            value: this._countChoice(question, 4)
-          },
-          choice5: {
-            value: this._countChoice(question, 5)
-          }
-        };
-
-        if(question.choice1) answers.choice1.label = question.choice1;
-        if(question.choice2) answers.choice2.label = question.choice2;
-        if(question.choice3) answers.choice3.label = question.choice3;
-        if(question.choice4) answers.choice4.label = question.choice4;
-        if(question.choice5) answers.choice5.label = question.choice5;
-
-
-        if(total > 0){
-          answers.choice1.percent = Math.round( answers.choice1.value * 100 / total );
-          answers.choice2.percent = Math.round( answers.choice2.value * 100 / total );
-          answers.choice3.percent = Math.round( answers.choice3.value * 100 / total );
-          answers.choice4.percent = Math.round( answers.choice4.value * 100 / total );
-          answers.choice5.percent = Math.round( answers.choice5.value * 100 / total );
-        }
-        else{
-          answers.choice1.percent = 0;
-          answers.choice2.percent = 0;
-          answers.choice3.percent = 0;
-          answers.choice4.percent = 0;
-          answers.choice5.percent = 0;
-        }
-        return answers;
-      },
-      answer: function(e) {
-        var choice = e.target.getAttribute('data-choice');
-        var questionKey = e.target.parentNode.parentNode.question.$key;
-        const questionQuery = this.$.questionQuery;
-        const user = this.user;
-
-        var answer = {
-          choice : choice
-        };
-
-        if(!this.user){
-          this.$.auth.signInAnonymously()
-          .then(function(response){
-            questionQuery.ref.child(questionKey).child('answers').child(response.uid).set(answer);
-          });
-        }
-        else{
-          questionQuery.ref.child(questionKey).child('answers').child(user.uid).set(answer);
-        }
       }
     });
   </script>

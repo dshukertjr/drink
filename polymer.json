@@ -4,7 +4,7 @@
   "fragments": [
     "src/my-questions.html",
     "src/my-post.html",
-    "src/my-user.html",
+    "src/poll-result.html",
     "src/my-view404.html"
   ],
   "sourceGlobs": [
