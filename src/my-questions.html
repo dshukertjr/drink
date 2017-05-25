@@ -32,15 +32,40 @@
         display: block;
         width:50px;
         height:50px;
-        position:fixed;
-        top:50%;
-        left:50%;
-        -webkit-transform:translate(-50%,-50%);
-        transform:translate(-50%,-50%);
+        margin:200px auto 0 auto;
       }
 
       paper-spinner {
         display: none;
+      }
+
+      @media screen and (min-width:840px){
+        #question-list{
+          display:-webkit-flex;
+          display:flex;
+          -webkit-justify-content: space-between;
+          justify-content: space-between;
+          -webkit-flex-wrap:wrap;
+          flex-wrap:wrap;
+          -webkit-flex-direction:row;
+          flex-direction:row;
+        }
+
+        poll-result{
+          width:50%;
+        }
+      }
+
+      @media screen and (min-width:1200px){
+        poll-result{
+          width:33.3%;
+        }
+      }
+
+      @media screen and (min-width:1500px){
+        poll-result{
+          width:300px;
+        }
       }
     </style>
     <firebase-auth 
