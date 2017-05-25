@@ -19,10 +19,15 @@
         margin:4px 0;
       }
 
+      h3{
+        margin-top:0;
+      }
+
       .choiceBar{
         min-width:1px;
         width:0%;
         background: var(--app-primary-color);
+        background: #ccc;
         -webkit-transition:width 0.2s;
         transition:width 0.2s;
         border-top-right-radius:5px;
@@ -30,8 +35,12 @@
         position:absolute;
         left:0;
         z-index:0;
-        opacity:0.6;
+        opacity:0.5;
         height:100%;
+      }
+
+      .choiceBar.myChoice{
+        background: var(--app-primary-color);
       }
 
       .barContent{
@@ -51,9 +60,6 @@
 
       .barContent>div{
         max-width:100%;
-        white-space: nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
         padding:2px 4px 2px 4px;
       }
 
@@ -103,7 +109,7 @@
           <div class="barContent">
             <div class="choiceLabel">[[question.choice1]]</div>
             <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
+            <div class="choicePercent"><span class="percent">0</span>%</div>
           </div>
         </div>
 
@@ -112,7 +118,7 @@
           <div class="barContent">
             <div class="choiceLabel">[[question.choice2]]</div>
             <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
+            <div class="choicePercent"><span class="percent">0</span>%</div>
           </div>
         </div>
 
@@ -121,7 +127,7 @@
           <div class="barContent">
             <div class="choiceLabel">[[question.choice3]]</div>
             <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
+            <div class="choicePercent"><span class="percent">0</span>%</div>
           </div>
         </div>
 
@@ -130,7 +136,7 @@
           <div class="barContent">
             <div class="choiceLabel">[[question.choice4]]</div>
             <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
+            <div class="choicePercent"><span class="percent">0</span>%</div>
           </div>
         </div>
 
@@ -139,9 +145,11 @@
           <div class="barContent">
             <div class="choiceLabel">[[question.choice5]]</div>
             <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
+            <div class="choicePercent"><span class="percent">0</span>%</div>
           </div>
         </div>
+
+        <div id="totalVotes"></div>
 
       </div>
 
@@ -176,6 +184,21 @@
         this._computeChoiceValue();
         this._computePercent();
         this._toggleAnswered();
+        this._inputTotal();
+        this._colorMychoice();
+      },
+
+      _colorMychoice: function(){
+        if(!this.user) return;
+        const uid = this.user.uid;
+        if(!this.question.answers[uid]) return;
+        const choice = this.question.answers[uid].choice;
+        if(this.querySelector('.myChoice')) this.querySelector('.myChoice').classList.remove('myChoice');
+        if(choice == 1) this.$.choice1.querySelector('.choiceBar').classList.add('myChoice');
+        if(choice == 2) this.$.choice2.querySelector('.choiceBar').classList.add('myChoice');
+        if(choice == 3) this.$.choice3.querySelector('.choiceBar').classList.add('myChoice');
+        if(choice == 4) this.$.choice4.querySelector('.choiceBar').classList.add('myChoice');
+        if(choice == 5) this.$.choice5.querySelector('.choiceBar').classList.add('myChoice');
       },
 
       //counts the number of votes for that choice
@@ -206,45 +229,11 @@
         return percent;
       },
 
-      //creates the answers object
-      _computeAnswers: function(){
-        //create an answer object to pass to result element
+      _inputTotal: function(){
         const question = this.question;
-        var total = this._countChoice(question, 1) + this._countChoice(question, 2) + this._countChoice(question, 3) + this._countChoice(question, 4) + this._countChoice(question, 5);
+        var total = this._countChoice(1) + this._countChoice(2) + this._countChoice(3) + this._countChoice(4) + this._countChoice(5);
 
-        var answers = {
-          choice1: {
-            value: this._countChoice(1)
-          },
-          choice2: {
-            value: this._countChoice(2)
-          },
-          choice3: {
-            value: this._countChoice(3)
-          },
-          choice4: {
-            value: this._countChoice(4)
-          },
-          choice5: {
-            value: this._countChoice(5)
-          }
-        };
-
-        if(total > 0){
-          answers.choice1.percent = Math.round( answers.choice1.value * 100 / total );
-          answers.choice2.percent = Math.round( answers.choice2.value * 100 / total );
-          answers.choice3.percent = Math.round( answers.choice3.value * 100 / total );
-          answers.choice4.percent = Math.round( answers.choice4.value * 100 / total );
-          answers.choice5.percent = Math.round( answers.choice5.value * 100 / total );
-        }
-        else{
-          answers.choice1.percent = 0;
-          answers.choice2.percent = 0;
-          answers.choice3.percent = 0;
-          answers.choice4.percent = 0;
-          answers.choice5.percent = 0;
-        }
-        return answers;
+        this.$.totalVotes.innerText = total.toLocaleString() + " votes";
       },
 
       //computes and styles the bar to proper length
@@ -257,38 +246,6 @@
         this.$.choice4.querySelector('.choiceBar').style.width = this._computeAnswerPercent(4) + "%";
         this.$.choice5.querySelector('.choiceBar').style.width = this._computeAnswerPercent(5) + "%";
 
-        // const answer = this._computeAnswers();
-
-        // const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
-
-        // var choiceLength = 0;
-        // var targetChoice = 0;
-
-        // //width of the barContent
-        // var wordWidth = 0;
-
-        // //width of the inside of a question card
-        // var wrapperWidth = this.$.questionTitle.clientWidth;
-
-        // choiceLength = answer.choice1.value * 100 / max;
-        // targetChoice = this.$.choice1.querySelector('.choiceBar');
-        // targetChoice.style.width = choiceLength + "%";
-
-        // choiceLength = answer.choice2.value * 100 / max;
-        // targetChoice = this.$.choice2.querySelector('.choiceBar');
-        // targetChoice.style.width = choiceLength + "%";
-
-        // choiceLength = answer.choice3.value * 100 / max;
-        // targetChoice = this.$.choice3.querySelector('.choiceBar');
-        // targetChoice.style.width = choiceLength + "%";
-
-        // choiceLength = answer.choice4.value * 100 / max;
-        // targetChoice = this.$.choice4.querySelector('.choiceBar');
-        // targetChoice.style.width = choiceLength + "%";
-
-        // choiceLength = answer.choice5.value * 100 / max;
-        // targetChoice = this.$.choice5.querySelector('.choiceBar');
-        // targetChoice.style.width = choiceLength + "%";
       },
 
       //
@@ -302,11 +259,18 @@
       },
 
       _computePercent: function(){
-        this.$.choice1.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(1) + "%";
-        this.$.choice2.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(2) + "%";
-        this.$.choice3.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(3) + "%";
-        this.$.choice4.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(4) + "%";
-        this.$.choice5.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(5) + "%";
+        this.$.choice1.querySelector('.barContent .choicePercent .percent').innerText = this._computeAnswerPercent(1);
+        this.$.choice2.querySelector('.barContent .choicePercent .percent').innerText = this._computeAnswerPercent(2);
+        this.$.choice3.querySelector('.barContent .choicePercent .percent').innerText = this._computeAnswerPercent(3);
+        this.$.choice4.querySelector('.barContent .choicePercent .percent').innerText = this._computeAnswerPercent(4);
+        this.$.choice5.querySelector('.barContent .choicePercent .percent').innerText = this._computeAnswerPercent(5);
+
+        //these are for incremental changes of the percent
+        // this._changeNumber(this.$.choice1.querySelector('.barContent .choicePercent .percent'),this._computeAnswerPercent(1),200);
+        // this._changeNumber(this.$.choice2.querySelector('.barContent .choicePercent .percent'),this._computeAnswerPercent(2),200);
+        // this._changeNumber(this.$.choice3.querySelector('.barContent .choicePercent .percent'),this._computeAnswerPercent(3),200);
+        // this._changeNumber(this.$.choice4.querySelector('.barContent .choicePercent .percent'),this._computeAnswerPercent(4),200);
+        // this._changeNumber(this.$.choice5.querySelector('.barContent .choicePercent .percent'),this._computeAnswerPercent(5),200);
       },
 
       _checkAnswered: function(){
@@ -335,6 +299,36 @@
           this.$.results.hidden = true;
         }
       },
+
+      // // increment the number changes 
+      // _changeNumber: function(targetElement, expected, time){
+      //   var current = parseInt(targetElement.innerText);
+      //   // current = 0;
+      //   // expected = 10;
+      //   console.log(' ');
+      //   console.log(' ');
+      //   console.log(' ');
+      //   console.log(' ');
+      //   console.log(current);
+      //   console.log(expected);
+      //   if(current != expected){
+
+      //     const interval =　time / (expected - current)*((expected-current > 0) ? 1 : -1);
+      //     console.log(current);
+      //     console.log(targetElement);
+      //     console.log(expected);
+      //     console.log('さやちゃん松嶋菜々子似');
+
+      //     var timeout = setInterval(function(){
+      //       current += ((expected-current > 0) ? 1 : -1); //increment or decrement based on the case
+      //       targetElement.innerText = current;
+      //       if(current == expected){
+      //         clearInterval(timeout);
+      //         console.log('めんそーれ');
+      //       }
+      //     }, 500);
+      //   }
+      // },
 
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');
