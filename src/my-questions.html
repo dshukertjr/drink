@@ -12,7 +12,6 @@
     <style include="shared-styles">
       :host {
         display: block;
-        padding: 10px;
         padding-bottom:72px;
       }
 
@@ -31,9 +30,13 @@
 
       paper-spinner[active] {
         display: block;
-        margin:120px auto 0 auto;
         width:50px;
         height:50px;
+        position:fixed;
+        top:50%;
+        left:50%;
+        -webkit-transform:translate(-50%,-50%);
+        transform:translate(-50%,-50%);
       }
 
       paper-spinner {

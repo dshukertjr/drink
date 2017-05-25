@@ -9,55 +9,52 @@
     <style include="shared-styles">
       :host {
         display: block;
-        padding: 10px;
+        padding: 8px;
         list-style-type:none;
+      }
+
+      .choiceWrapper{
+        position:relative;
+        font-size:0;
+        margin:4px 0;
       }
 
       .choiceBar{
         min-width:1px;
         width:0%;
         background: var(--app-primary-color);
-        color:#fff;
         -webkit-transition:width 0.2s;
         transition:width 0.2s;
-        margin:4px 0;
-        position:relative;
         border-top-right-radius:5px;
         border-bottom-right-radius:5px;
-        font-size:0;
+        position:absolute;
+        left:0;
+        z-index:0;
+        opacity:0.6;
+        height:100%;
       }
 
       .barContent{
         max-width:100%;
-      }
-
-      .barContent, .barContentPlaceholder{
-        padding:4px;
-        display:inline-block;
+        color: #000;
+        position:relative;
         font-size:14px;
-        min-width:200px;
+        display:-webkit-flex;
+        display:flex;
+        justify-content: space-between;
+        -webkit-justify-content: space-between;
       }
 
-      .barContent>div, .barContentPlaceholder>div{
+      .choiceValue{
+        display:none;
+      }
+
+      .barContent>div{
         max-width:100%;
         white-space: nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
-      }
-
-      .barContentPlaceholder{
-        display:none;
-      }
-
-      .choiceBar.lessThanHalf .barContent{
-        position:absolute;
-        left:100%;
-        color:#000;
-      }
-
-      .choiceBar.lessThanHalf .barContentPlaceholder{
-        color:transparent;
-        display:inline-block;
+        padding:2px 4px 2px 4px;
       }
 
       .choices-wrapper{
@@ -101,65 +98,45 @@
       </div>
 
       <div id="results" hidden="true">
-        <div class="choiceBar" id="choice1" hidden$="[[!question.choice1]]">
+        <div class="choiceWrapper" id="choice1" hidden$="[[!question.choice1]]">
+          <div class="barContentPlaceholder choiceBar"></div>
           <div class="barContent">
-            <div class="choiceLabel">[[question.choice1]]</div>
-            <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
-          </div>
-          <div class="barContentPlaceholder">
             <div class="choiceLabel">[[question.choice1]]</div>
             <div class="choiceValue">0</div>
             <div class="choicePercent">0%</div>
           </div>
         </div>
 
-        <div class="choiceBar" id="choice2" hidden$="[[!question.choice2]]">
+        <div class="choiceWrapper" id="choice2" hidden$="[[!question.choice2]]">
+          <div class="barContentPlaceholder choiceBar"></div>
           <div class="barContent">
-            <div class="choiceLabel">[[question.choice2]]</div>
-            <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
-          </div>
-          <div class="barContentPlaceholder">
             <div class="choiceLabel">[[question.choice2]]</div>
             <div class="choiceValue">0</div>
             <div class="choicePercent">0%</div>
           </div>
         </div>
 
-        <div class="choiceBar" id="choice3" hidden$="[[!question.choice3]]">
+        <div class="choiceWrapper" id="choice3" hidden$="[[!question.choice3]]">
+          <div class="barContentPlaceholder choiceBar"></div>
           <div class="barContent">
-            <div class="choiceLabel">[[question.choice3]]</div>
-            <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
-          </div>
-          <div class="barContentPlaceholder">
             <div class="choiceLabel">[[question.choice3]]</div>
             <div class="choiceValue">0</div>
             <div class="choicePercent">0%</div>
           </div>
         </div>
 
-        <div class="choiceBar" id="choice4" hidden$="[[!question.choice4]]">
+        <div class="choiceWrapper" id="choice4" hidden$="[[!question.choice4]]">
+          <div class="barContentPlaceholder choiceBar"></div>
           <div class="barContent">
-            <div class="choiceLabel">[[question.choice4]]</div>
-            <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
-          </div>
-          <div class="barContentPlaceholder">
             <div class="choiceLabel">[[question.choice4]]</div>
             <div class="choiceValue">0</div>
             <div class="choicePercent">0%</div>
           </div>
         </div>
 
-        <div class="choiceBar" id="choice5" hidden$="[[!question.choice5]]">
+        <div class="choiceWrapper" id="choice5" hidden$="[[!question.choice5]]">
+          <div class="barContentPlaceholder choiceBar"></div>
           <div class="barContent">
-            <div class="choiceLabel">[[question.choice5]]</div>
-            <div class="choiceValue">0</div>
-            <div class="choicePercent">0%</div>
-          </div>
-          <div class="barContentPlaceholder">
             <div class="choiceLabel">[[question.choice5]]</div>
             <div class="choiceValue">0</div>
             <div class="choicePercent">0%</div>
@@ -270,54 +247,48 @@
         return answers;
       },
 
-      //moves the bar content depending on the size of the bar
-      _moveBarContent: function(targetChoice, choiceLength, wordWidth, wrapperWidth){
-        if(choiceLength < 50 && !targetChoice.classList.contains('lessThanHalf')) targetChoice.classList.add('lessThanHalf');
-        else if( choiceLength > 50  || wordWidth < (wrapperWidth * choiceLength /100) ) targetChoice.classList.remove('lessThanHalf');
-      },
-
       //computes and styles the bar to proper length
       _computeBarLength: function(){
         //calculate the length of each choice
-        const answer = this._computeAnswers();
 
-        const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
+        this.$.choice1.querySelector('.choiceBar').style.width = this._computeAnswerPercent(1) + "%";
+        this.$.choice2.querySelector('.choiceBar').style.width = this._computeAnswerPercent(2) + "%";
+        this.$.choice3.querySelector('.choiceBar').style.width = this._computeAnswerPercent(3) + "%";
+        this.$.choice4.querySelector('.choiceBar').style.width = this._computeAnswerPercent(4) + "%";
+        this.$.choice5.querySelector('.choiceBar').style.width = this._computeAnswerPercent(5) + "%";
 
-        var choiceLength = 0;
-        var targetChoice = 0;
+        // const answer = this._computeAnswers();
 
-        //width of the barContent
-        var wordWidth = 0;
+        // const max = Math.max(answer.choice1.value, answer.choice2.value, answer.choice3.value, answer.choice4.value, answer.choice5.value);
 
-        //width of the inside of a question card
-        var wrapperWidth = this.$.questionTitle.clientWidth;
+        // var choiceLength = 0;
+        // var targetChoice = 0;
 
-        choiceLength = answer.choice1.value * 100 / max;
-        targetChoice = this.$.choice1;
-        targetChoice.style.width = choiceLength + "%";
-        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
-        this._moveBarContent(targetChoice, choiceLength, wordWidth, wrapperWidth);
+        // //width of the barContent
+        // var wordWidth = 0;
 
-        choiceLength = answer.choice2.value * 100 / max;
-        targetChoice = this.$.choice2;
-        targetChoice.style.width = choiceLength + "%";
-        wordWidth = targetChoice.querySelector('.barContent').clientWidth;
-        this._moveBarContent(targetChoice, choiceLength, wordWidth, wrapperWidth);
+        // //width of the inside of a question card
+        // var wrapperWidth = this.$.questionTitle.clientWidth;
 
-        choiceLength = answer.choice3.value * 100 / max;
-        targetChoice = this.$.choice3;
-        targetChoice.style.width = choiceLength + "%";
-        this._moveBarContent(targetChoice, choiceLength, wordWidth, wrapperWidth);
+        // choiceLength = answer.choice1.value * 100 / max;
+        // targetChoice = this.$.choice1.querySelector('.choiceBar');
+        // targetChoice.style.width = choiceLength + "%";
 
-        choiceLength = answer.choice4.value * 100 / max;
-        targetChoice = this.$.choice4;
-        targetChoice.style.width = choiceLength + "%";
-        this._moveBarContent(targetChoice, choiceLength, wordWidth, wrapperWidth);
+        // choiceLength = answer.choice2.value * 100 / max;
+        // targetChoice = this.$.choice2.querySelector('.choiceBar');
+        // targetChoice.style.width = choiceLength + "%";
 
-        choiceLength = answer.choice5.value * 100 / max;
-        targetChoice = this.$.choice5;
-        targetChoice.style.width = choiceLength + "%";
-        this._moveBarContent(targetChoice, choiceLength, wordWidth, wrapperWidth);
+        // choiceLength = answer.choice3.value * 100 / max;
+        // targetChoice = this.$.choice3.querySelector('.choiceBar');
+        // targetChoice.style.width = choiceLength + "%";
+
+        // choiceLength = answer.choice4.value * 100 / max;
+        // targetChoice = this.$.choice4.querySelector('.choiceBar');
+        // targetChoice.style.width = choiceLength + "%";
+
+        // choiceLength = answer.choice5.value * 100 / max;
+        // targetChoice = this.$.choice5.querySelector('.choiceBar');
+        // targetChoice.style.width = choiceLength + "%";
       },
 
       //
@@ -328,11 +299,6 @@
         this.$.choice4.querySelector('.barContent .choiceValue').innerText = this._countChoice(4);
         this.$.choice5.querySelector('.barContent .choiceValue').innerText = this._countChoice(5);
 
-        this.$.choice1.querySelector('.barContentPlaceholder .choiceValue').innerText = this._countChoice(1);
-        this.$.choice2.querySelector('.barContentPlaceholder .choiceValue').innerText = this._countChoice(2);
-        this.$.choice3.querySelector('.barContentPlaceholder .choiceValue').innerText = this._countChoice(3);
-        this.$.choice4.querySelector('.barContentPlaceholder .choiceValue').innerText = this._countChoice(4);
-        this.$.choice5.querySelector('.barContentPlaceholder .choiceValue').innerText = this._countChoice(5);
       },
 
       _computePercent: function(){
@@ -341,11 +307,6 @@
         this.$.choice3.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(3) + "%";
         this.$.choice4.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(4) + "%";
         this.$.choice5.querySelector('.barContent .choicePercent').innerText = this._computeAnswerPercent(5) + "%";
-        this.$.choice1.querySelector('.barContentPlaceholder .choicePercent').innerText = this._computeAnswerPercent(1) + "%";
-        this.$.choice2.querySelector('.barContentPlaceholder .choicePercent').innerText = this._computeAnswerPercent(2) + "%";
-        this.$.choice3.querySelector('.barContentPlaceholder .choicePercent').innerText = this._computeAnswerPercent(3) + "%";
-        this.$.choice4.querySelector('.barContentPlaceholder .choicePercent').innerText = this._computeAnswerPercent(4) + "%";
-        this.$.choice5.querySelector('.barContentPlaceholder .choicePercent').innerText = this._computeAnswerPercent(5) + "%";
       },
 
       _checkAnswered: function(){
