@@ -180,17 +180,18 @@
       ],
 
       _questionChanged: function(){
-        this._computeBarLength();
         this._computeChoiceValue();
         this._computePercent();
         this._toggleAnswered();
         this._inputTotal();
+        this._computeBarLength();
         this._colorMychoice();
       },
 
       _colorMychoice: function(){
         if(!this.user) return;
         const uid = this.user.uid;
+        if(!this.question.answers) return;
         if(!this.question.answers[uid]) return;
         const choice = this.question.answers[uid].choice;
         if(this.querySelector('.myChoice')) this.querySelector('.myChoice').classList.remove('myChoice');
