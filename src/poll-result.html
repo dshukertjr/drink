@@ -64,17 +64,20 @@
       }
 
       .choices-wrapper{
-        display:-webkit-flex;
-        -webkit-flex-wrap:wrap;
-        -webkit-justify-content:space-between;
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:space-between;
       }
 
       .choice {
         text-transform: none;
-        margin:4px;
+        margin:8px 0;
+        display:block;
+        text-align:center;
+
+      }
+
+      @media screen and (min-width:840px){
+        :host {
+          height:100%;
+        }
       }
     </style>
 

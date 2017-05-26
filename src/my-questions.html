@@ -4,8 +4,8 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="poll-result.html">
 <link rel="import" href="shared-styles.html">
 
@@ -86,16 +86,16 @@
      <firebase-query
       id="questionQuery"
       path="/questions"
-      limit-to-last="15"
+      limit-to-last="[[questionNum]]"
       data="{{questions}}">
     </firebase-query>
 
+
+
     <ul id="question-list">
-    <iron-scroll-threshold on-lower-threshold="_loadMoreQuestions" lower-threshold="400">
-      <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question" scroll-target="document">
+      <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
         <poll-result questionkey="[[question.$key]]"></poll-result>
       </template>
-    </iron-scroll-threshold>
     </ul>
 
     <paper-spinner id="spinner" active></paper-spinner>
@@ -108,6 +108,10 @@
     Polymer({
       is: 'my-questions',
       properties:{
+        questionNum: {
+          type: Number,
+          value: 15
+        },
         user:{
           type: Object
         },
@@ -116,25 +120,47 @@
         },
         questions: {
           type: Object
+        },
+        nearBottom: {
+          type: Boolean
         }
       },
-      // observers: [
-      //   '_computeAnswers(questions.$key.answers)'
-      // ],
+
       ready: function(){
+        this._hideSpinner();
+        this._onLowerThreshold();
+      },
+
+      _hideSpinner: function(){
         const spinner = this.$.spinner;
         this.$.questionQuery.ref.once('value').then(function(snapshot) {
           spinner.removeAttribute('active');
         });
       },
 
+      _onLowerThreshold: function(){
+        const lowerThreshold = 400;
+        thisElement = this;
+        window.addEventListener('scroll', function(e) {
+          var body = document.body; // For Chrome, Safari and Opera
+          var html = document.documentElement; // Firefox and IE
+          var documentHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+          var windowHeight = window.innerHeight;
+          var bodyScrollBottom = documentHeight - windowHeight - body.scrollTop;
+          var htmlScrollBottom = documentHeight - windowHeight - html.scrollTop;
+          var check = true;
+          if( bodyScrollBottom < lowerThreshold ){
+            thisElement._loadMoreQuestions();
+            check = false;
+          }
+          if( htmlScrollBottom < lowerThreshold &&  check){
+            thisElement._loadMoreQuestions();
+          }
+        });
+      },
+
       _loadMoreQuestions: function(){
-        console.log('fired load more questions');
-        if(this.questions){
-          console.log('loaded more questions');
-          var questionCount = this.$.questionQuery.limitToLast;
-          this.$.questionQuery.limitToLast = questionCount + 3;
-        }
+        this.questionNum = this.questionNum + 10;
       },
 
       _computeSort: function(a, b) {
