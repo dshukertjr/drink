@@ -20,7 +20,6 @@
   <template>
     <style>
       :host {
-        --app-primary-color: #4285f4;
         --app-primary-color: #36d3af;
         --app-secondary-color: black;
 
@@ -51,18 +50,26 @@
         color: black;
         font-weight: bold;
       }
+
       </style>
     <firebase-app 
       auth-domain="drink-f8aff.firebaseapp.com" 
       database-url="https://drink-f8aff.firebaseio.com" 
       api-key="AIzaSyBzOoSEui2_rJSxLTSoYWcNpP2bUcO9bpY">
     </firebase-app>
+
     <firebase-auth 
       id="auth" 
       user="{{user}}" 
       provider="" 
       on-error="handleError">
     </firebase-auth>
+
+    <firebase-document
+      id="userDocument"
+      path="/users/{{user.uid}}"
+      data="{{userMeta}}">
+    </firebase-document>
 
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -74,20 +81,20 @@
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer">
-        <app-toolbar>Menu</app-toolbar>
+        <app-toolbar>Voter</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="questions" href="/questions">Posts</a>
+          <a name="questions" href="/questions">Questions</a>
         </iron-selector>
       </app-drawer>
 
       <!-- Main content -->
       <app-header-layout id="appHeaderLayout">
 
-        <app-header condenses reveals effects="waterfall">
+        <app-header condenses fixed reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
-            <div main-title>Demo</div>
-            <div hidden$="[[!user]]">Guest</div>
+            <div id="mainTitle" main-title>[[pageTitle]]</div>
+            <div hidden$="[[!user]]">Guest [[answerCount]]</div>
           </app-toolbar>
         </app-header>
 
@@ -117,8 +124,19 @@
           reflectToAttribute: true,
           observer: '_pageChanged',
         },
+        pageTitle :{
+          type: String,
+          computed: '_changePageTitlte(page)'
+        },
         user:{
           type: Object
+        },
+        userMeta: {
+          type: Object
+        },
+        answerCount: {
+          type: Number,
+          computed: '_countAnswers(userMeta.answers)'
         }
       },
 
@@ -127,12 +145,12 @@
       },
 
       observers: [
-        '_routePageChanged(routeData.page)',
+        '_routePageChanged(routeData.page)'
       ],
 
-      // ready: function(){
-      //   this.$.auth.signOut();
-      // },
+      ready: function(){
+        // this.$.auth.signOut();
+      },
 
       _routePageChanged: function(page) {
         this.page = page || 'questions';
@@ -140,6 +158,32 @@
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
+        }
+      },
+
+      _changePageTitlte: function(){
+        if(this.page == "questions") {
+          return "Questions";
+        }else if(this.page == "post"){
+          return "Add New";
+        }else{
+          return "404";
+        }
+      },
+
+      _countAnswers: function(){
+        if(this.userMeta == null) return null;
+
+        const userMeta = this.userMeta;
+
+        //check if the question has answers at all
+        if(!userMeta.hasOwnProperty('answers')) return null;
+        else{
+          var count = 0;
+          Object.keys(userMeta.answers).forEach(function (key) {
+            count++;
+          });
+          return count;
         }
       },
 

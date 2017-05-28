@@ -64,6 +64,8 @@
       }
 
       .choices-wrapper{
+        -webkit-justify-content:space-between;
+        justify-content:space-between;
       }
 
       .choice {
@@ -87,6 +89,11 @@
       data="{{question}}">
     </firebase-document>
 
+    <firebase-document
+      id="userDocument"
+      path="/users/{{user.uid}}">
+    </firebase-document>
+
     <firebase-auth 
       id="auth" 
       user="{{user}}" 
@@ -98,7 +105,7 @@
       <h3 id="questionTitle" class="content">[[question.question]]</h3>
       <p hidden="true">[[question.afterMessage]]</p>
 
-      <div id="answerButtons" class="choices-wrapper" hidden="true">
+      <div id="answerButtons" class="choices-wrapper flex" hidden="true">
         <paper-button on-tap="answer" data-choice="1" class="choice" raised>[[question.choice1]]</paper-button>
         <paper-button on-tap="answer" class="choice" data-choice="2" raised>[[question.choice2]]</paper-button>
         <paper-button on-tap="answer" class="choice" data-choice="3" raised hidden$="[[!question.choice3]]">[[question.choice3]]</paper-button>
@@ -217,11 +224,10 @@
         if(!question.hasOwnProperty('answers')) return 0;
         else if(!question.hasOwnProperty(choiceKey)) return 0;
         else{
-        var count = 0;
+          var count = 0;
           Object.keys(question.answers).forEach(function (key) {
             if(question.answers[key].choice == choice) count++;
           });
-          var key = '#'+choiceKey+' .choiceValue';
           return count;
         }
       },
@@ -338,6 +344,7 @@
         var choice = e.target.getAttribute('data-choice');
         var questionKey = this.questionkey;
         const questionDocument = this.$.questionDocument;
+        const userDocument = this.$.userDocument;
         const user = this.user;
 
         var answer = {
@@ -348,11 +355,15 @@
           //if not signed in, sign in first
           this.$.auth.signInAnonymously()
           .then(function(response){
+            var path = "/users/" + response.uid;
+            userDocument.path = path;
             questionDocument.ref.child('answers').child(response.uid).set(answer);
+            userDocument.ref.child('answers').child(questionKey).set(answer);
           });
         }
         else{
           questionDocument.ref.child('answers').child(user.uid).set(answer);
+          userDocument.ref.child('answers').child(questionKey).set(answer);
         }
       },
    });
