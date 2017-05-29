@@ -8,12 +8,14 @@
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="../src/my-post.html">
-<link rel="import" href="../src/my-questions.html">
+<link rel="import" href="my-post.html">
+<link rel="import" href="my-questions.html">
+<link rel="import" href="custom-icons.html">
 <link rel="import" href="my-icons.html">
 
 <dom-module id="my-app">
@@ -81,9 +83,13 @@
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer">
-        <app-toolbar>Voter</app-toolbar>
+        <app-toolbar>
+          <iron-icon icon="custom-icons:nita-q"></iron-icon>
+          Voter
+        </app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="questions" href="/questions">Questions</a>
+          <a name="questions" href="/">Questions</a>
+          <a name="post" href="/post">Add New Question</a>
         </iron-selector>
       </app-drawer>
 
@@ -126,7 +132,7 @@
         },
         pageTitle :{
           type: String,
-          computed: '_changePageTitlte(page)'
+          computed: '_changePageTitle(page)'
         },
         user:{
           type: Object
@@ -161,7 +167,7 @@
         }
       },
 
-      _changePageTitlte: function(){
+      _changePageTitle: function(){
         if(this.page == "questions") {
           return "Questions";
         }else if(this.page == "post"){

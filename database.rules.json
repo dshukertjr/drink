@@ -5,7 +5,11 @@
       ".write": "auth != null",
       "$uid": {
         ".read": "true",
-        ".write": "$uid === auth.uid"
+        ".write": "$uid === auth.uid",
+        "answers": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
       }
     },
     "questions": {

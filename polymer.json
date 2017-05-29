@@ -15,5 +15,14 @@
   "includeDependencies": [
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
-  ]
+  ],
+  "builds": [ 
+  { "addServiceWorker": true, 
+    "bundle": true,
+    "js": { "minify": true },
+    "css": { "minify": true }, 
+    "html": { "minify": true }
+  }]
 }
+
+

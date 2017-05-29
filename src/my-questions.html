@@ -121,6 +121,9 @@
         questions: {
           type: Object
         },
+        currentQuestions: {
+          type: Object
+        },
         nearBottom: {
           type: Boolean
         }
@@ -157,6 +160,10 @@
             thisElement._loadMoreQuestions();
           }
         });
+      },
+
+      dataChanged: function (newData, oldData) {
+
       },
 
       _loadMoreQuestions: function(){
