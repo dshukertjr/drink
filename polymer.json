@@ -17,12 +17,11 @@
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ],
   "builds": [ 
-  { "addServiceWorker": true, 
-    "bundle": true,
-    "js": { "minify": true },
-    "css": { "minify": true }, 
-    "html": { "minify": true }
-  }]
+    {
+      "addServiceWorker": true,
+      "js": {"minify": true },
+      "css": { "minify": true },
+      "html": { "minify": true }
+    }
+  ]
 }
-
-
