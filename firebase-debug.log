@@ -1,0 +1,35 @@
+[debug] ----------------------------------------------------------------------
+[debug] Command:      /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.9.0
+[debug] Platform:     darwin
+[debug] Node Version: v6.10.0
+[debug] Time:         Wed May 31 2017 08:12:54 GMT+0900 (JST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[debug] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/khzXPEjDRqhRjHeThCDyXcLfZVYHi-mucLCSJYTjrCo',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Wed May 31 2017 08:12:54 GMT+0900 (JST)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/drink-f8aff  
+ Wed May 31 2017 08:12:54 GMT+0900 (JST)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/drink-f8aff/tokens  
+ Wed May 31 2017 08:12:56 GMT+0900 (JST)
+[debug] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/tylershukert/Dropbox/polyfire/drink'...
+[info] 
+[debug] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/drink-f8aff  
+ Wed May 31 2017 08:12:57 GMT+0900 (JST)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/657318010905/clients/_:getWebAppConfig  
+ Wed May 31 2017 08:12:58 GMT+0900 (JST)
+[debug] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: build/default
+[info] ✔  hosting: Local server: http://localhost:5000
+
