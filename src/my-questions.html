@@ -41,6 +41,12 @@
         display: none;
       }
 
+      #loadNew{
+        margin:8px;
+        display:block;
+        text-align:center;
+      }
+
       @media screen and (min-width:840px){
         #question-list{
           display:-webkit-flex;
@@ -87,12 +93,14 @@
       id="questionQuery"
       path="/questions"
       limit-to-last="[[questionNum]]"
-      data="{{questions}}">
+      data="{{questions}}"
+      on-data-changed="_questionsChanged">
     </firebase-query>
 
 
 
     <ul id="question-list">
+      <paper-button class="card" id="loadNew" on-tap="loadNew">Load more Questions</paper-button>
       <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
         <poll-result questionkey="[[question.$key]]"></poll-result>
       </template>
@@ -121,6 +129,10 @@
         questions: {
           type: Object
         },
+        newestQuestionId: {
+          type: String,
+          value: null
+        },
         currentQuestions: {
           type: Object
         },
@@ -132,6 +144,15 @@
       ready: function(){
         this._hideSpinner();
         this._onLowerThreshold();
+      },
+
+      _questionsChanged: function(){
+        if(this.questions == null) return;
+        var newestQuestionId = this.questions[this.questions.length - 1].$key;
+        if(this.newestQuestionId == null) this.newestQuestionId = newestQuestionId;
+        else if(this.newestQuestionId != newestQuestionId){
+          
+        }
       },
 
       _hideSpinner: function(){
