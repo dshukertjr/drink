@@ -45,6 +45,16 @@
         margin:8px;
         display:block;
         text-align:center;
+        -webkit-transition:max-height 0.2s;
+        transition:max-height 0.2s;
+        padding:0;
+        max-height:0;
+        overflow:hidden;
+      }
+
+      #loadNew.active{
+        padding:16px;
+        max-height:50px;
       }
 
       @media screen and (min-width:840px){
@@ -59,24 +69,28 @@
           flex-direction:row;
         }
 
-        poll-result{
+        .question{
           width:50%;
+        }
+
+        #loadNew{
+          width:100%;
         }
       }
 
       @media screen and (min-width:1200px){
-        poll-result{
+        .question{
           width:33.3%;
         }
       }
 
       @media screen and (min-width:1500px){
-        poll-result{
+        .question{
           width:25%;
         }
 
       @media screen and (min-width:1800px){
-        poll-result{
+        .question{
           width:300px;
         }
       }
@@ -84,31 +98,20 @@
     <firebase-auth 
       id="auth" 
       user="{{user}}" 
-      provider="" 
-      status-known="{{statusKnown}}"
       on-error="handleError">
     </firebase-auth>
 
-     <firebase-query
-      id="questionQuery"
-      path="/questions"
-      limit-to-last="[[questionNum]]"
-      data="{{questions}}"
-      on-data-changed="_questionsChanged">
-    </firebase-query>
-
-
-
     <ul id="question-list">
-      <paper-button class="card" id="loadNew" on-tap="loadNew">Load more Questions</paper-button>
+      <paper-button class="card" id="loadNew" on-tap="loadNew">Load [[newQuestionNum]] More Questions</paper-button>
       <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
-        <poll-result questionkey="[[question.$key]]"></poll-result>
+        <poll-result class="question" questionkey="[[question.$key]]"></poll-result>
       </template>
     </ul>
 
     <paper-spinner id="spinner" active></paper-spinner>
 
-    <a href="/post"><paper-fab icon="add"></paper-fab></a>
+
+    <a href="/post"><paper-fab elevation="3" icon="add"></paper-fab></a>
 
    </template>
 
@@ -123,9 +126,6 @@
         user:{
           type: Object
         },
-        statusKnown:{
-           type: Object
-        },
         questions: {
           type: Object
         },
@@ -138,26 +138,62 @@
         },
         nearBottom: {
           type: Boolean
-        }
+        },
+        // newQuestionNum: {
+        //   type: String,
+        //   computed: '_listenToNewQuestions'
+        // }
       },
 
       ready: function(){
-        this._hideSpinner();
+        this._loadQuestions();
         this._onLowerThreshold();
+        // this._listenToNewQuestions();
       },
 
-      _questionsChanged: function(){
-        if(this.questions == null) return;
-        var newestQuestionId = this.questions[this.questions.length - 1].$key;
-        if(this.newestQuestionId == null) this.newestQuestionId = newestQuestionId;
-        else if(this.newestQuestionId != newestQuestionId){
-          
-        }
-      },
+      // loadNew: function(){
+      //   this.$.loadNew.classList.remove('active');
+      //   this._loadQuestions(true);
+      // },
 
-      _hideSpinner: function(){
+      // _listenToNewQuestions: function(){
+      //   if(this.newestQuestionId == null) return 0;
+      //   var query = this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToLast(15).on('value').then(function(snapshot) {
+      //     var tempquestions = snapshot.val();
+      //     var count = 0;
+      //     Object.keys(tempquestions).map(function(objectKey, index) {
+      //       count ++;
+      //     });
+      //   });
+      //   if(count > 0) this.$.loadNew.classList.add('active');
+      //   if(count >= 15) return '15+';
+      //   return count;
+      // },
+
+      _loadQuestions: function(loadNew = false){
         const spinner = this.$.spinner;
-        this.$.questionQuery.ref.once('value').then(function(snapshot) {
+        const questionQuery = this.$.questionQuery;
+        const thisElement = this;
+        var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
+
+        //if newestQuestionId is set and  load the ones up to that
+        if(this.newestQuestionId != null && loadNew === false) query = this.$.questionQuery.ref.endAt(null, this.newestQuestionId).limitToLast(this.questionNum);
+        query.once('value').then(function(snapshot) {
+
+
+          var tempquestions = snapshot.val();
+
+          var questions=[];
+
+          Object.keys(tempquestions).map(function(objectKey, index) {
+              var value = tempquestions[objectKey];
+              value.$key = objectKey;
+              questions.push(value);
+              thisElement.newestQuestionId = value.$key;
+          });
+
+          thisElement.questions = questions;
+
           spinner.removeAttribute('active');
         });
       },
@@ -183,12 +219,9 @@
         });
       },
 
-      dataChanged: function (newData, oldData) {
-
-      },
-
       _loadMoreQuestions: function(){
         this.questionNum = this.questionNum + 10;
+        this._loadQuestions();
       },
 
       _computeSort: function(a, b) {
