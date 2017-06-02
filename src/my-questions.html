@@ -4,8 +4,6 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="poll-result.html">
 <link rel="import" href="shared-styles.html">
 
@@ -104,8 +102,7 @@
    <firebase-query
       id="questionQuery"
       path="/questions"
-      limit-to-last="1"
-      data="{{rawQuestions}}">
+      limit-to-last="1">
     </firebase-query>
 
     <ul id="question-list">
@@ -136,9 +133,6 @@
         questions: {
           type: Object
         },
-        rawQuestions: {
-          type: Object
-        },
         newestQuestionId: {
           type: String,
           value: null,
@@ -156,7 +150,7 @@
       },
 
       ready: function(){
-        this._loadQuestions();
+        this._loadQuestions(false);
         this._onLowerThreshold();
       },
 
@@ -166,21 +160,32 @@
       },
 
       _listenToNewQuestions: function(){
-        console.log('listen called');
         const loadNew = this.$.loadNew;
         const thisElement = this;
+        const user = this.user;
 
+        //counts the number of newly added questions
         var listen = function(snapshot) {
-          console.log(thisElement.newestQuestionId);
           var count = -1;
           var tempquestions = snapshot.val();
+          var loadOnce = true;
           Object.keys(tempquestions).map(function(objectKey, index) {
-            console.log(objectKey);
-            console.log(tempquestions[objectKey]);
+            if(count >= 0){
+              if(tempquestions[objectKey].Uid === user.uid && loadOnce){
+                thisElement.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId).limitToFirst(16).off('value', listen);
+                thisElement.loadNew();
+                console.log('they are equal!');
+                loadOnce = false;
+              }
+              console.log(tempquestions[objectKey].question);
+              console.log('are these equal?');
+              console.log(user.uid);
+              console.log(tempquestions[objectKey].Uid);
+              console.log('');
+              console.log('');
+            }
             count ++;
           });
-          console.log(count);
-          console.log(loadNew);
           if(count > 0) loadNew.classList.add('active');
           else if(loadNew.classList.contains('active')) loadNew.classList.remove('active');
 
@@ -192,20 +197,20 @@
           this.newQuestionNum = '0';
           return;
         }
-        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(15).off('value', listen);
-        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(15).on('value', listen);
+        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(16).off('value', listen);
+        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(16).on('value', listen);
         },
 
       _loadQuestions: function(loadNew = false){
+        if(loadNew) console.log('loadQuestion true is called');
         const spinner = this.$.spinner;
-        const questionQuery = this.$.questionQuery;
         const thisElement = this;
         var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
 
         //if newestQuestionId is set and  load the ones up to that
         if(this.newestQuestionId != null && loadNew === false) query = this.$.questionQuery.ref.endAt(null, this.newestQuestionId).limitToLast(this.questionNum);
-        query.once('value').then(function(snapshot) {
 
+        query.once('value').then(function(snapshot) {
 
           var tempquestions = snapshot.val();
 
@@ -248,7 +253,7 @@
 
       _loadMoreQuestions: function(){
         this.questionNum = this.questionNum + 10;
-        this._loadQuestions();
+        this._loadQuestions(false);
       },
 
       _computeSort: function(a, b) {
