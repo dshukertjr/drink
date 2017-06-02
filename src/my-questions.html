@@ -101,6 +101,13 @@
       on-error="handleError">
     </firebase-auth>
 
+   <firebase-query
+      id="questionQuery"
+      path="/questions"
+      limit-to-last="1"
+      data="{{rawQuestions}}">
+    </firebase-query>
+
     <ul id="question-list">
       <paper-button class="card" id="loadNew" on-tap="loadNew">Load [[newQuestionNum]] More Questions</paper-button>
       <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
@@ -129,9 +136,13 @@
         questions: {
           type: Object
         },
+        rawQuestions: {
+          type: Object
+        },
         newestQuestionId: {
           type: String,
-          value: null
+          value: null,
+          observer: '_listenToNewQuestions'
         },
         currentQuestions: {
           type: Object
@@ -139,36 +150,51 @@
         nearBottom: {
           type: Boolean
         },
-        // newQuestionNum: {
-        //   type: String,
-        //   computed: '_listenToNewQuestions'
-        // }
+        newQuestionNum: {
+          type: String
+        }
       },
 
       ready: function(){
         this._loadQuestions();
         this._onLowerThreshold();
-        // this._listenToNewQuestions();
       },
 
-      // loadNew: function(){
-      //   this.$.loadNew.classList.remove('active');
-      //   this._loadQuestions(true);
-      // },
+      loadNew: function(){
+        this.$.loadNew.classList.remove('active');
+        this._loadQuestions(true);
+      },
 
-      // _listenToNewQuestions: function(){
-      //   if(this.newestQuestionId == null) return 0;
-      //   var query = this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToLast(15).on('value').then(function(snapshot) {
-      //     var tempquestions = snapshot.val();
-      //     var count = 0;
-      //     Object.keys(tempquestions).map(function(objectKey, index) {
-      //       count ++;
-      //     });
-      //   });
-      //   if(count > 0) this.$.loadNew.classList.add('active');
-      //   if(count >= 15) return '15+';
-      //   return count;
-      // },
+      _listenToNewQuestions: function(){
+        console.log('listen called');
+        const loadNew = this.$.loadNew;
+        const thisElement = this;
+
+        var listen = function(snapshot) {
+          console.log(thisElement.newestQuestionId);
+          var count = -1;
+          var tempquestions = snapshot.val();
+          Object.keys(tempquestions).map(function(objectKey, index) {
+            console.log(objectKey);
+            console.log(tempquestions[objectKey]);
+            count ++;
+          });
+          console.log(count);
+          console.log(loadNew);
+          if(count > 0) loadNew.classList.add('active');
+          else if(loadNew.classList.contains('active')) loadNew.classList.remove('active');
+
+          if(count >= 15) thisElement.newQuestionNum = '15+';
+          else thisElement.newQuestionNum = count;
+        };
+
+        if(this.newestQuestionId == null){
+          this.newQuestionNum = '0';
+          return;
+        }
+        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(15).off('value', listen);
+        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(15).on('value', listen);
+        },
 
       _loadQuestions: function(loadNew = false){
         const spinner = this.$.spinner;
@@ -189,8 +215,9 @@
               var value = tempquestions[objectKey];
               value.$key = objectKey;
               questions.push(value);
-              thisElement.newestQuestionId = value.$key;
           });
+
+          thisElement.newestQuestionId = questions[questions.length - 1].$key;
 
           thisElement.questions = questions;
 
