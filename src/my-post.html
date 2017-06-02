@@ -30,6 +30,11 @@
         text-decoration:none;
       }
 
+      #btnPost{
+        background:var(--app-primary-color);
+        color:#fff;
+      }
+
       #cancel{
         color:#000;
       }
@@ -55,7 +60,7 @@
       <paper-button id="reveal5" on-tap="reveal5" hidden="true"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
       <paper-textarea id="choice5" class="choices" label="Choice 5" placeholder="e.g. Not a fan of basket ball fan..." hidden="true"></paper-textarea>
       <div class="buttons">
-        <a href="/"><paper-button on-tap="post" id="btnPost" raised class="indigo">Post</paper-button></a>
+        <a href="/"><paper-button on-tap="post" id="btnPost" raised>Post</paper-button></a>
         <a href="/"><paper-button id="cancel">Cancel</paper-button></a>
       </div>
     </div>
