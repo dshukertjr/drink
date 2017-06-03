@@ -1,7 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="custom-icons.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="poll-result">
@@ -73,7 +75,37 @@
         margin:8px 0;
         display:block;
         text-align:center;
+      }
 
+      .comment{
+        padding:4px;
+        min-width:80px;
+        background: var(--app-primary-color);
+        color:#fff;
+        position:relative;
+        margin:4px 0 14px 0;
+        border-radius:4px;
+        display:inline-block;
+      }
+
+      .comment:after{
+        content:"";
+        display:block;
+        border-top: 10px solid var(--app-primary-color);
+        border-right: 10px solid transparent;
+        position:absolute;
+        left:10px;
+        top:99%
+      }
+
+      #commentBody{
+        -webkit-flex-grow:1;
+        flex-grow:1;
+      }
+
+      #commentButton{
+        background:var(--app-primary-color);
+        color:#fff;
       }
 
       @media screen and (min-width:840px){
@@ -93,6 +125,12 @@
       id="userDocument"
       path="/users/{{user.uid}}">
     </firebase-document>
+
+   <firebase-query
+      id="commentQuery"
+      path="/questions/[[questionkey]]/comments"
+      data="{{comments}}">
+    </firebase-query>
 
     <firebase-auth 
       id="auth" 
@@ -159,8 +197,21 @@
           </div>
         </div>
 
-        <div id="totalVotes"></div>
+        <div class="flex-left-right">
+          <div id="totalVotes"></div>
+          <paper-icon-button on-tap="toggleComments" icon="custom-icons:comment"></paper-icon-button>
+        </div>
 
+        <div id="comments" hidden$="[[!showComment]]">
+          <template is="dom-repeat" items="[[comments]]" as="comment">
+            <div class="comment">[[comment.body]]</div>
+          </template>
+        </div>
+        <div id="comment-text-box" class="flex-left-right" hidden$="[[!showComment]]">
+          <paper-textarea id="commentBody" label="comment"></paper-textarea>
+          <paper-button id="commentButton" on-tap="postComment" raised>comment</paper-button>
+        </div>
+  
       </div>
 
     </li>
@@ -182,6 +233,13 @@
         },
         questionkey: {
           type: String
+        },
+        showComment: {
+          type: Boolean,
+          value: false
+        },
+        comments: {
+          type: Object
         }
       },
 
@@ -210,6 +268,26 @@
         if(choice == 3) this.$.choice3.querySelector('.choiceBar').classList.add('myChoice');
         if(choice == 4) this.$.choice4.querySelector('.choiceBar').classList.add('myChoice');
         if(choice == 5) this.$.choice5.querySelector('.choiceBar').classList.add('myChoice');
+      },
+
+      postComment: function(){
+        const body = this.$.commentBody.value;
+        const questionKey = this.questionkey;
+        const comment = {
+          body: body,
+          Uid: this.user.uid
+        }
+        const userRef = {
+          questionKey: questionKey
+        }
+        this.$.questionDocument.ref.child('comments').push(comment);
+        this.$.userDocument.ref.child('comments').child(questionKey).set(userRef);
+        this.$.commentBody.value = null;
+      },
+
+      toggleComments: function(){
+        if(this.showComment) this.showComment = false;
+        else this.showComment = true;
       },
 
       //counts the number of votes for that choice
