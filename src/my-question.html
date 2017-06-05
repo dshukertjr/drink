@@ -1,0 +1,93 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="poll-result.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-question">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      #question-list{
+        list-style-type:none;
+        margin:0;
+        padding:0;
+      }
+
+      paper-spinner-lite[active] {
+        display: block;
+        width:50px;
+        height:50px;
+        margin:200px auto 0 auto;
+        --paper-spinner-layer-1-color: var(--app-primary-color);
+        --paper-spinner-layer-2-color: var(--app-primary-color);
+        --paper-spinner-layer-3-color: var(--app-primary-color);
+        --paper-spinner-layer-4-color: var(--app-primary-color);
+      }
+
+      paper-spinner-lite {
+        display: none;
+      }
+    </style>
+
+    <app-route
+      route="{{route}}"
+      pattern="/:questionKey"
+      data="{{routeData}}"></app-route>
+
+   <firebase-query
+      id="questionQuery"
+      path="/questions"
+      limit-to-last="1">
+    </firebase-query>
+
+    <ul id="question-list">
+      <poll-result comment-num="null" show-comment="true" class="question" questionkey="[[questionKey]]"></poll-result>
+    </ul>
+
+    <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+   </template>
+
+  <script>
+    Polymer({
+      is: 'my-question',
+      properties:{
+        questionKey: {
+          type: String
+        },
+        routeData: {
+          type: Object
+        },
+        questionKey: {
+          type: String,
+          computed: 'getQuestionKey(routeData)'
+        }
+      },
+
+      ready: function(){
+        this._hideSpinner();
+      },
+
+      getQuestionKey: function(){
+        return this.routeData.questionKey;
+      },
+
+      _hideSpinner: function(){
+        const spinner = this.$.spinner;
+        var query = this.$.questionQuery.ref.limitToLast(1);
+
+        query.once('value').then(function(snapshot) {
+          spinner.removeAttribute('active');
+        });
+      },
+
+    });
+  </script>
+</dom-module>

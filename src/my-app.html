@@ -15,6 +15,7 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="my-post.html">
 <link rel="import" href="my-questions.html">
+<link rel="import" href="my-question.html">
 <link rel="import" href="custom-icons.html">
 <link rel="import" href="my-icons.html">
 
@@ -51,6 +52,10 @@
       .drawer-list a.iron-selected {
         color: black;
         font-weight: bold;
+      }
+
+      #backArrow{
+        color:#fff;
       }
 
       </style>
@@ -98,7 +103,8 @@
 
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
-            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+            <a id="backArrow" hidden$="[[onMainPage]]" href="/"><paper-icon-button icon="my-icons:arrow-back"></paper-icon-button></a>
+            <div hidden$="[[!onMainPage]]"><paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button></div>
             <div id="mainTitle" main-title>[[pageTitle]]</div>
             <div hidden$="[[!user]]">Guest [[answerCount]]</div>
           </app-toolbar>
@@ -111,6 +117,7 @@
             role="main">
           <my-questions id="myQuestions" question-num="15" name="questions"></my-questions>
           <my-post name="post"></my-post>
+          <my-question name="question" route="{{subroute}}"></my-question>
           <!-- <my-user name="user"></my-user> -->
           <my-view404 name="view404"></my-view404>
         </iron-pages>
@@ -143,6 +150,13 @@
         answerCount: {
           type: Number,
           computed: '_countAnswers(userMeta.answers)'
+        },
+        subroute: {
+          type: Object
+        },
+        onMainPage: {
+          type: Boolean,
+          computed: 'isonMainPage(page)'
         }
       },
 
@@ -154,13 +168,13 @@
         '_routePageChanged(routeData.page)'
       ],
 
-      ready: function(){
-        // this.$.auth.signOut();
+      isonMainPage: function(){
+        if(this.page == "questions") return true;
+        else return false;
       },
 
       _routePageChanged: function(page) {
         this.page = page || 'questions';
-
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
@@ -172,6 +186,8 @@
           return "Questions";
         }else if(this.page == "post"){
           return "Add New";
+        }else if(this.page == "question"){
+          return "Question";
         }else{
           return "404";
         }
@@ -197,6 +213,10 @@
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        var body = document.body; // For Chrome, Safari and Opera
+        var html = document.documentElement; // Firefox and IE
+        body.scrollTop = 0;
+        html.scrollTop = 0;
       },
 
       _showPage404: function() {

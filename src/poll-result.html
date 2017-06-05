@@ -110,6 +110,11 @@
         color:#fff;
       }
 
+      #comment-text-box{
+        -webkit-align-items:flex-end;
+        align-items:flex-end;
+      }
+
       @media screen and (min-width:840px){
         :host {
           height:100%;
@@ -131,7 +136,7 @@
    <firebase-query
       id="commentQuery"
       path="/questions/[[questionkey]]/comments"
-      limit-to-last="3"
+      limit-to-last="[[commentNum]]"
       data="{{comments}}">
     </firebase-query>
 
@@ -209,13 +214,16 @@
         </div>
 
         <div id="comments" hidden$="[[!showComment]]">
+          <div id="comment-text-box" class="flex-left-right" hidden$="[[!showComment]]">
+            <paper-textarea on-value-changed="textareaChanged" maxlength="255" on-focused-changed="commentFocus" id="commentBody" label="Leave a comment"></paper-textarea>
+            <paper-button hidden$="[[!commentBodyLength]]" id="commentButton" on-tap="postComment" raised>comment</paper-button>
+          </div>
           <template is="dom-repeat" items="[[comments]]" sort="_computeSort" as="comment">
             <div class="comment">[[comment.body]]</div>
             <div></div>
           </template>
-          <div id="comment-text-box" class="flex-left-right" hidden$="[[!showComment]]">
-            <paper-textarea on-focused-changed="commentFocus" id="commentBody" label="Leave a comment"></paper-textarea>
-            <paper-button id="commentButton" on-tap="postComment" raised>comment</paper-button>
+          <div class="centerBtnWrapper" id="seeAllWrapper" hidden$="[[!commentNum]]">
+            <a href="/question/[[questionkey]]"><paper-button>See all</paper-button></a>
           </div>
         </div>
   
@@ -248,12 +256,20 @@
         comments: {
           type: Object
         },
-        commentCount: {
+        commentCount: {//number of comments on this question
           type: String
         },
         focused: {
           type: Boolean,
           value: false
+        },
+        commentNum: {//number of comments shown
+          type: Number,
+          value: 3
+        },
+        commentBodyLength: {
+          type: Number,
+          value: null
         }
       },
 
@@ -269,6 +285,11 @@
         this._inputTotal();
         this._computeBarLength();
         this._colorMychoice();
+      },
+
+      textareaChanged: function(){
+        if(this.$.commentBody.value == null) this.commentBodyLength = null;
+        else this.commentBodyLength = this.$.commentBody.value.length;
       },
 
       _colorMychoice: function(){
@@ -307,13 +328,21 @@
       },
 
       countComment: function(){
-        if(this.comments == null) return;
+        if(this.question.comments == null){
+          this.$.seeAllWrapper.hidden = true;
+          return;
+        }
         if(this.comments.length > 0){
           var count = 0;
-          var comments = this.question.comments
+          var comments = this.question.comments;
           Object.keys(comments).map(function(objectKey, index) {
             count++;
           });
+          if(count < 4) {
+            this.$.seeAllWrapper.hidden = true;
+          }else if(this.commentNum) {
+            this.$.seeAllWrapper.hidden = false;
+          }
           this.commentCount = count;
         }
       },

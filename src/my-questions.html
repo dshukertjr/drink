@@ -187,15 +187,8 @@
               if(tempquestions[objectKey].Uid === user.uid && loadOnce){
                 thisElement.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId).limitToFirst(16).off('value', listen);
                 thisElement.loadNew();
-                console.log('they are equal!');
                 loadOnce = false;
               }
-              console.log(tempquestions[objectKey].question);
-              console.log('are these equal?');
-              console.log(user.uid);
-              console.log(tempquestions[objectKey].Uid);
-              console.log('');
-              console.log('');
             }
             count ++;
           });
