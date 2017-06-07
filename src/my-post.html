@@ -3,8 +3,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="custom-icons.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-post">
@@ -51,13 +50,13 @@
       <paper-textarea id="choice1" class="choices" label="Choice 1" placeholder="e.g. Warriors!"></paper-textarea>
       <paper-textarea id="choice2" class="choices" label="Choice 2" placeholder="e.g. Cavs!"></paper-textarea>
 
-      <paper-button id="reveal3" on-tap="reveal3"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-button id="reveal3" on-tap="reveal3"><iron-icon icon="custom-icons:add" prefix></iron-icon>Add more</paper-button>
       <paper-textarea id="choice3" class="choices" label="Choice 3" placeholder="e.g. Wait, I'm a Celtics fan!" hidden="true"></paper-textarea>
 
-      <paper-button id="reveal4" on-tap="reveal4" hidden="true"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-button id="reveal4" on-tap="reveal4" hidden="true"><iron-icon icon="custom-icons:add" prefix></iron-icon>Add more</paper-button>
       <paper-textarea id="choice4" class="choices" label="Choice 4" placeholder="e.g. Other" hidden="true"></paper-textarea>
 
-      <paper-button id="reveal5" on-tap="reveal5" hidden="true"><iron-icon icon="add" prefix></iron-icon>Add more</paper-button>
+      <paper-button id="reveal5" on-tap="reveal5" hidden="true"><iron-icon icon="custom-icons:add" prefix></iron-icon>Add more</paper-button>
       <paper-textarea id="choice5" class="choices" label="Choice 5" placeholder="e.g. Not a fan of basket ball fan..." hidden="true"></paper-textarea>
       <div class="buttons">
         <a href="/"><paper-button on-tap="post" id="btnPost" raised>Post</paper-button></a>
