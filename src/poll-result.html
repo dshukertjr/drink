@@ -79,7 +79,7 @@
 
       .comment{
         padding:4px;
-        min-width:80px;
+        min-width:40px;
         background: var(--app-primary-color);
         color:#fff;
         position:relative;
@@ -123,17 +123,20 @@
     </style>
 
     <firebase-document
+      app-name="drink"
       id="questionDocument"
       path="/questions/{{questionkey}}"
       data="{{question}}">
     </firebase-document>
 
     <firebase-document
+      app-name="drink"
       id="userDocument"
       path="/users/{{user.uid}}">
     </firebase-document>
 
    <firebase-query
+      app-name="drink"
       id="commentQuery"
       path="/questions/[[questionkey]]/comments"
       limit-to-last="[[commentNum]]"
@@ -141,6 +144,7 @@
     </firebase-query>
 
     <firebase-auth 
+      app-name="drink"
       id="auth" 
       user="{{user}}" 
       provider="" 
@@ -223,7 +227,7 @@
             <div></div>
           </template>
           <div class="centerBtnWrapper" id="seeAllWrapper" hidden$="[[!commentNum]]">
-            <a href="/question/[[questionkey]]"><paper-button>See all</paper-button></a>
+            <a href="/question/[[questionkey]]"><paper-button>See all comments</paper-button></a>
           </div>
         </div>
   

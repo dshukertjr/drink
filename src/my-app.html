@@ -13,9 +13,13 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="my-post.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+
+<!-- <link rel="import" href="my-post.html">
 <link rel="import" href="my-questions.html">
 <link rel="import" href="my-question.html">
+ -->
 <link rel="import" href="custom-icons.html">
 <link rel="import" href="my-icons.html">
 
@@ -60,19 +64,21 @@
 
       </style>
     <firebase-app 
+      name="drink"
       auth-domain="drink-f8aff.firebaseapp.com" 
       database-url="https://drink-f8aff.firebaseio.com" 
       api-key="AIzaSyBzOoSEui2_rJSxLTSoYWcNpP2bUcO9bpY">
     </firebase-app>
 
     <firebase-auth 
+      app-name="drink"
       id="auth" 
       user="{{user}}" 
-      provider="" 
       on-error="handleError">
     </firebase-auth>
 
     <firebase-document
+      app-name="drink"
       id="userDocument"
       path="/users/{{user.uid}}"
       data="{{userMeta}}">

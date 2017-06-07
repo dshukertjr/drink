@@ -10,15 +10,16 @@
 <dom-module id="my-post">
   <template>
     <firebase-auth 
+      app-name="drink"
       id="auth" 
       user="{{user}}" 
-      provider="" 
-      status-known="{{statusKnown}}"
       on-error="handleError">
     </firebase-auth>
+
     <firebase-query
-        id="query"
-        path="/questions">
+      app-name="drink"
+      id="query"
+      path="/questions">
     </firebase-query>
     <style include="shared-styles">
       :host {
