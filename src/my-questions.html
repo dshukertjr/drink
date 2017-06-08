@@ -34,11 +34,15 @@
         display: block;
         width:50px;
         height:50px;
-        margin:200px auto 0 auto;
+        margin: 10px auto;
         --paper-spinner-layer-1-color: var(--app-primary-color);
         --paper-spinner-layer-2-color: var(--app-primary-color);
         --paper-spinner-layer-3-color: var(--app-primary-color);
         --paper-spinner-layer-4-color: var(--app-primary-color);
+      }
+
+      #spinner{
+        margin:200px auto 0 auto;
       }
 
       paper-spinner-lite {
@@ -122,6 +126,8 @@
 
     <paper-spinner-lite id="spinner" active></paper-spinner-lite>
 
+    <paper-spinner-lite id="loadingSpinner" active$="[[!canLoadMoreQuestions]]"></paper-spinner-lite>
+
 
     <a id="paperFab" href="/post"><paper-fab elevation="3" icon="custom-icons:add"></paper-fab></a>
 
@@ -154,6 +160,10 @@
         },
         newQuestionNum: {
           type: String
+        },
+        canLoadMoreQuestions: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -235,6 +245,10 @@
 
           thisElement.questions = questions;
 
+          //for loading questions on loswer threshold
+          if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
+          else thisElement.$.loadingSpinner.active = false;
+
           spinner.removeAttribute('active');
         });
       },
@@ -243,21 +257,28 @@
         const lowerThreshold = 500;
         thisElement = this;
         window.addEventListener('scroll', function(e) {
-          var body = document.body; // For Chrome, Safari and Opera
-          var html = document.documentElement; // Firefox and IE
-          var documentHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-          var windowHeight = window.innerHeight;
-          var bodyScrollBottom = documentHeight - windowHeight - body.scrollTop;
-          var htmlScrollBottom = documentHeight - windowHeight - html.scrollTop;
-          var check = true;
-          if( bodyScrollBottom < lowerThreshold ){
-            thisElement._loadMoreQuestions();
-            check = false;
-          }
-          if( htmlScrollBottom < lowerThreshold &&  check){
-            thisElement._loadMoreQuestions();
+          if(thisElement.canLoadMoreQuestions){
+            var body = document.body; // For Chrome, Safari and Opera
+            var html = document.documentElement; // Firefox and IE
+            var documentHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+            var windowHeight = window.innerHeight;
+            var bodyScrollBottom = documentHeight - windowHeight - body.scrollTop;
+            var htmlScrollBottom = documentHeight - windowHeight - html.scrollTop;
+
+            //to take in account for difference browsers
+            var check = true;
+            if( bodyScrollBottom < lowerThreshold ){
+              thisElement._loadMoreQuestions();
+              check = false;
+              thisElement.canLoadMoreQuestions = false;
+            }
+            if( htmlScrollBottom < lowerThreshold &&  check){
+              thisElement._loadMoreQuestions();
+              thisElement.canLoadMoreQuestions = false;
+            }
           }
         });
+
       },
 
       _loadMoreQuestions: function(){
