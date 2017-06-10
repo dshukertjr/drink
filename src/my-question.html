@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
-<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="poll-result.html">
 <link rel="import" href="shared-styles.html">
@@ -51,8 +50,6 @@
       <poll-result comment-num="null" show-comment="true" class="question" questionkey="[[questionKey]]"></poll-result>
     </ul>
 
-    <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-
    </template>
 
   <script>
@@ -71,23 +68,9 @@
         }
       },
 
-      ready: function(){
-        this._hideSpinner();
-      },
-
       getQuestionKey: function(){
         return this.routeData.questionKey;
-      },
-
-      _hideSpinner: function(){
-        const spinner = this.$.spinner;
-        var query = this.$.questionQuery.ref.limitToLast(1);
-
-        query.once('value').then(function(snapshot) {
-          console.log(snapshot);
-          spinner.removeAttribute('active');
-        });
-      },
+      }
 
     });
   </script>
