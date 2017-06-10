@@ -23,16 +23,18 @@
       :host {
         --app-primary-color: #03A9F4;
         --app-secondary-color: black;
-
+        --header-image: url(https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg);
         display: block;
       }
 
       app-header {
         color: #fff;
         background-color: var(--app-primary-color);
+        height:180px;
 
         --app-header-background-front-layer: {
-          background-image: url("https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg");
+          background-position:center;
+          background-image: var(--header-image);
         };
       }
 
@@ -209,6 +211,22 @@
         }
       },
 
+      _changeHeaderImage: function(){
+        if(this.page == "questions") {
+          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg)';
+          this.updateStyles();
+        }else if(this.page == "post"){
+          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/IMG_20161023_171202-220x165.jpg)';
+          this.updateStyles();
+        }else if(this.page == "question"){
+          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/GettyImages_500529708_7k8rzp0g_3mmdctzx-220x165.jpg)';
+          this.updateStyles();
+        }else{
+          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/GettyImages_500529708_7k8rzp0g_3mmdctzx-220x165.jpg)';
+          this.updateStyles();
+        }
+      },
+
       _countAnswers: function(){
         if(this.userMeta == null) return null;
 
@@ -226,6 +244,9 @@
       },
 
       _pageChanged: function(page) {
+        //change header image
+        this._changeHeaderImage();
+
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
