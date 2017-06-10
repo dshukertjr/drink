@@ -37,7 +37,8 @@
     <app-route
       route="{{route}}"
       pattern="/:questionKey"
-      data="{{routeData}}"></app-route>
+      data="{{routeData}}">
+    </app-route>
 
    <firebase-query
       app-name="drink"
@@ -83,6 +84,7 @@
         var query = this.$.questionQuery.ref.limitToLast(1);
 
         query.once('value').then(function(snapshot) {
+          console.log(snapshot);
           spinner.removeAttribute('active');
         });
       },
