@@ -30,18 +30,18 @@
       app-header {
         color: #fff;
         background-color: var(--app-primary-color);
-      }
 
-      app-header {
-        background-color: red;
-        --app-header-background-rear-layer: {
-          /* The header is blue when condensed */
-          background-color: blue;
+        --app-header-background-front-layer: {
+          background-image: url("https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg");
         };
       }
 
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
+      }
+
+      #main-title-toolbar{
+        --app-toolbar-font-size: 32px;
       }
 
       .drawer-list {
@@ -110,12 +110,15 @@
       <!-- Main content -->
       <app-header-layout id="appHeaderLayout">
 
-        <app-header condenses reveals effects="waterfall">
+        <app-header condenses reveals effects="waterfall resize-title blend-background">
           <app-toolbar>
             <a id="backArrow" hidden$="[[onMainPage]]" href="/"><paper-icon-button icon="my-icons:arrow-back"></paper-icon-button></a>
             <div hidden$="[[!onMainPage]]"><paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button></div>
-            <div id="mainTitle" main-title>[[pageTitle]]</div>
+            <div id="mainTitle" condensed-title>[[pageTitle]]</div>
             <div hidden$="[[!user]]">Guest [[answerCount]]</div>
+          </app-toolbar>
+          <app-toolbar id="main-title-toolbar">
+            <div main-title>[[pageTitle]]</div>
           </app-toolbar>
         </app-header>
 
@@ -162,6 +165,10 @@
         },
         subroute: {
           type: Object
+        },
+        test: {
+          type: String,
+          value: "red"
         },
         onMainPage: {
           type: Boolean,
