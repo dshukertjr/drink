@@ -43,7 +43,8 @@
       app-name="drink"
       id="questionQuery"
       path="/questions/[[questionKey]]"
-      limit-to-last="1">
+      limit-to-last="1"
+      data="{{question}}">
     </firebase-query>
 
     <ul id="question-list">
@@ -65,6 +66,13 @@
         questionKey: {
           type: String,
           computed: 'getQuestionKey(routeData)'
+        },
+        question: {
+          type: Object
+        },
+        questionTitle: {
+          type: String,
+          value: "test"
         }
       },
 

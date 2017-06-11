@@ -23,14 +23,13 @@
       :host {
         --app-primary-color: #03A9F4;
         --app-secondary-color: black;
-        --header-image: url(https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg);
+        --header-image: none;
         display: block;
       }
 
       app-header {
         color: #fff;
         background-color: var(--app-primary-color);
-        height:180px;
 
         --app-header-background-front-layer: {
           background-position:center;
@@ -112,16 +111,20 @@
       <!-- Main content -->
       <app-header-layout id="appHeaderLayout">
 
-        <app-header condenses reveals effects="waterfall resize-title blend-background">
+        <app-header id="appHeader" condenses reveals effects="waterfall resize-title blend-background">
           <app-toolbar>
             <a id="backArrow" hidden$="[[onMainPage]]" href="/"><paper-icon-button icon="my-icons:arrow-back"></paper-icon-button></a>
             <div hidden$="[[!onMainPage]]"><paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button></div>
-            <div id="mainTitle" condensed-title>[[pageTitle]]</div>
+            <div id="mainTitle" condensed-title$="[[isCoorporate]]" main-title$="[[!isCoorporate]]">[[pageTitle]]</div>
             <div hidden$="[[!user]]">Guest [[answerCount]]</div>
           </app-toolbar>
-          <app-toolbar id="main-title-toolbar">
-            <div main-title>[[pageTitle]]</div>
-          </app-toolbar>
+
+          <template is="dom-if" if="[[isCoorporate]]">
+            <app-toolbar id="main-title-toolbar">
+              <div main-title>[[pageTitle]]</div>
+            </app-toolbar>
+          </template>
+
         </app-header>
 
         <iron-pages
@@ -131,7 +134,7 @@
             role="main">
           <my-questions id="myQuestions" question-num="15" name="questions"></my-questions>
           <my-post name="post"></my-post>
-          <my-question name="question" route="{{subroute}}"></my-question>
+          <my-question question-title="{{pageTitle}}" name="question" route="{{subroute}}"></my-question>
           <!-- <my-user name="user"></my-user> -->
           <my-view404 name="view404"></my-view404>
         </iron-pages>
@@ -175,6 +178,10 @@
         onMainPage: {
           type: Boolean,
           computed: 'isonMainPage(page)'
+        },
+        isCoorporate: {
+          type: Boolean,
+          computed: 'checkCoorporate(page)'
         }
       },
 
@@ -189,6 +196,11 @@
       isonMainPage: function(){
         if(this.page == "questions") return true;
         else return false;
+      },
+
+      checkCoorporate: function(){
+        if(this.page == "questions") return true;
+        return false;
       },
 
       _routePageChanged: function(page) {
@@ -212,18 +224,26 @@
       },
 
       _changeHeaderImage: function(){
-        if(this.page == "questions") {
+
+        //fire window resize
+        var event = document.createEvent('HTMLEvents');
+        event.initEvent('resize', true, false);
+        document.dispatchEvent(event);
+
+        this.$.mainTitle.style = null;
+
+        if(this.isCoorporate) {
+
+          this.$.appHeader.style.height = "180px";
           this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/06/pexels-photo-1.jpg)';
           this.updateStyles();
-        }else if(this.page == "post"){
-          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/IMG_20161023_171202-220x165.jpg)';
-          this.updateStyles();
-        }else if(this.page == "question"){
-          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/GettyImages_500529708_7k8rzp0g_3mmdctzx-220x165.jpg)';
-          this.updateStyles();
+
         }else{
-          this.customStyle['--header-image'] = 'url(https://www.venturepartner.me/wp-content/uploads/2017/03/GettyImages_500529708_7k8rzp0g_3mmdctzx-220x165.jpg)';
+
+          this.$.appHeader.style.height = "auto";
+          this.customStyle['--header-image'] = 'none';
           this.updateStyles();
+
         }
       },
 
