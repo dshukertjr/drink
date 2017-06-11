@@ -129,14 +129,14 @@
     <firebase-document
       app-name="drink"
       id="questionDocument"
-      path="/questions/{{questionkey}}"
+      path="/questions/[[questionkey]]"
       data="{{question}}">
     </firebase-document>
 
     <firebase-document
       app-name="drink"
       id="userDocument"
-      path="/users/{{user.uid}}">
+      path="/users/[[user.uid]]">
     </firebase-document>
 
    <firebase-query
@@ -279,13 +279,22 @@
         commentBodyLength: {
           type: Number,
           value: null
+        },
+        questionTitle: {
+          type: String,
+          computed: 'setQuestionTitle(question)',
+          notify:true
         }
       },
 
       observers: [
         '_questionChanged(question.answers)',
-        'countComment(question.comments)'
+        'countComment(comments)'
       ],
+
+      setQuestionTitle: function(){
+        return this.question.question;
+      },
 
       _questionChanged: function(){
         this._computeChoiceValue();
@@ -338,6 +347,11 @@
 
       countComment: function(){
         if(this.question.comments == null){
+          this.$.seeAllWrapper.hidden = true;
+          this.commentCount = null;
+          return;
+        }
+        if(this.comments == null){
           this.$.seeAllWrapper.hidden = true;
           this.commentCount = null;
           return;

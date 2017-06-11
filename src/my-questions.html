@@ -164,6 +164,14 @@
         canLoadMoreQuestions: {
           type: Boolean,
           value: true
+        },
+        pageTitle: {
+          type: String,
+          value: 'Questions',
+          notify: true
+        },
+        selected: { //used to determine if selected by iron pages as the current page
+          type: Boolean
         }
       },
 
@@ -257,7 +265,8 @@
         const lowerThreshold = 500;
         thisElement = this;
         window.addEventListener('scroll', function(e) {
-          if(thisElement.canLoadMoreQuestions){
+          // console.log(this.classList.contains("iron-selected"));
+          if(thisElement.canLoadMoreQuestions && thisElement.selected){
             var body = document.body; // For Chrome, Safari and Opera
             var html = document.documentElement; // Firefox and IE
             var documentHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );

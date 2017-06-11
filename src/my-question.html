@@ -48,7 +48,7 @@
     </firebase-query>
 
     <ul id="question-list">
-      <poll-result comment-num="null" show-comment="true" class="question" questionkey="[[questionKey]]"></poll-result>
+      <poll-result question-title="{{pageTitle}}" comment-num="null" show-comment="true" class="question" questionkey="[[questionKey]]"></poll-result>
     </ul>
 
    </template>
@@ -57,9 +57,6 @@
     Polymer({
       is: 'my-question',
       properties:{
-        questionKey: {
-          type: String
-        },
         routeData: {
           type: Object
         },
@@ -67,19 +64,20 @@
           type: String,
           computed: 'getQuestionKey(routeData)'
         },
-        question: {
-          type: Object
-        },
-        questionTitle: {
+        pageTitle: {
           type: String,
-          value: "test"
+          observer: 'some',
+          notify: true
         }
+      },
+
+      some: function(){
+        console.log(this.questionTitle);
       },
 
       getQuestionKey: function(){
         return this.routeData.questionKey;
       }
-
     });
   </script>
 </dom-module>
