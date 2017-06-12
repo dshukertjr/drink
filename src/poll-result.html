@@ -478,13 +478,14 @@
 
       answer: function(e) {
         var choice = e.target.getAttribute('data-choice');
+        choice = parseInt(choice);
         var questionKey = this.questionkey;
         const questionDocument = this.$.questionDocument;
         const userDocument = this.$.userDocument;
         const user = this.user;
 
         var answer = {
-          choice : choice
+          "choice" : choice
         };
 
         if(!this.user){
