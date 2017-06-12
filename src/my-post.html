@@ -82,16 +82,29 @@
       },
      post: function() {
       var question = {
-        "Uid": this.user.uid,
-        "question": this.$.question.value,
-        "choice1": this.$.choice1.value,
-        "choice2": this.$.choice2.value
+        "meta": {
+          "Uid": this.user.uid,
+          "question": this.$.question.value,
+          "choice1": this.$.choice1.value,
+          "choice2": this.$.choice2.value
+        }
       }
       // if(this.$.afterMessage.value != null) data["afterMessage"] = this.$.afterMessage.value;
-      if(this.$.choice3.value != null) question["choice3"] = this.$.choice3.value;
-      if(this.$.choice4.value != null) question["choice4"] = this.$.choice4.value;
-      if(this.$.choice5.value != null) question["choice5"] = this.$.choice5.value;
-      this.$.query.ref.push(question);
+      if(this.$.choice3.value != null) question["meta"]["choice3"] = this.$.choice3.value;
+      if(this.$.choice4.value != null) question["meta"]["choice4"] = this.$.choice4.value;
+      if(this.$.choice5.value != null) question["meta"]["choice5"] = this.$.choice5.value;
+
+      var query = this.$.query;
+      if(!this.user){
+        //if not signed in, sign in first
+        this.$.auth.signInAnonymously()
+        .then(function(response){
+          query.ref.push(question);
+        });
+      }else{
+        this.$.query.ref.push(question);
+      }
+
 
       //emptying the text boxes
       this.$.question.value = null;
@@ -127,10 +140,6 @@
       this.$.choice5.hidden = false;
       this.$.reveal5.hidden = true;
     },
-
-    test: function(){
-      console.log(this.$.query.data);
-    }
    });
   </script>
 </dom-module>

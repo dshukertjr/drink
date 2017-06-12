@@ -229,7 +229,6 @@
         },
 
       _loadQuestions: function(loadNew = false){
-        if(loadNew) console.log('loadQuestion true is called');
         const spinner = this.$.spinner;
         const thisElement = this;
         var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
@@ -243,17 +242,23 @@
 
           var questions=[];
 
-          Object.keys(tempquestions).map(function(objectKey, index) {
-              var value = tempquestions[objectKey];
-              value.$key = objectKey;
-              questions.push(value);
-          });
+          // console.log(tempquestions);
 
-          thisElement.newestQuestionId = questions[questions.length - 1].$key;
+          if(tempquestions != null){
 
-          thisElement.questions = questions;
+            Object.keys(tempquestions).map(function(objectKey, index) {
+                var value = tempquestions[objectKey];
+                value.$key = objectKey;
+                questions.push(value);
+            });
 
-          //for loading questions on loswer threshold
+            thisElement.newestQuestionId = questions[questions.length - 1].$key;
+
+            thisElement.questions = questions;
+
+          }
+
+            //for loading questions on lower threshold
           if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
           else thisElement.$.loadingSpinner.active = false;
 
