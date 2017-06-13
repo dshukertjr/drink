@@ -149,7 +149,10 @@
         },
         newestQuestionId: {
           type: String,
-          value: null,
+          observer: '_listenToNewQuestions'
+        },
+        oldestQuestionId: {
+          type: String,
           observer: '_listenToNewQuestions'
         },
         currentQuestions: {
@@ -205,7 +208,7 @@
           var loadOnce = true;
           Object.keys(tempquestions).map(function(objectKey, index) {
             if(count >= 0){
-              if(tempquestions[objectKey].Uid === user.uid && loadOnce){
+              if(tempquestions[objectKey].meta.Uid === user.uid && loadOnce){
                 thisElement.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId).limitToFirst(16).off('value', listen);
                 thisElement.loadNew();
                 loadOnce = false;
@@ -213,7 +216,7 @@
             }
             count ++;
           });
-          if(count > 0) loadNew.classList.add('active');
+          if(count > 0 && loadOnce) loadNew.classList.add('active');
           else if(loadNew.classList.contains('active')) loadNew.classList.remove('active');
 
           if(count >= 15) thisElement.newQuestionNum = '15+';
@@ -224,13 +227,18 @@
           this.newQuestionNum = '0';
           return;
         }
-        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(16).off('value', listen);
-        this.$.questionQuery.ref.startAt(null, this.newestQuestionId).limitToFirst(16).on('value', listen);
-        },
+        thisElement.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId).limitToFirst(16).on('value', listen);
+        thisElement.addEventListener("reloaded", function(){
+          thisElement.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId).limitToFirst(16).off('value', listen);
+        });
+        //need to remove the added event here in the future
+      },
 
       _loadQuestions: function(loadNew = false){
         const spinner = this.$.spinner;
         const thisElement = this;
+
+        //initial load
         var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
 
         //if newestQuestionId is set and  load the ones up to that
@@ -242,7 +250,6 @@
 
           var questions=[];
 
-          // console.log(tempquestions);
 
           if(tempquestions != null){
 
@@ -252,6 +259,7 @@
                 questions.push(value);
             });
 
+            thisElement.fire('reloaded');
             thisElement.newestQuestionId = questions[questions.length - 1].$key;
 
             thisElement.questions = questions;
@@ -266,11 +274,78 @@
         });
       },
 
+      _objectToArray: function(object){
+        //converts object to array
+        if(object == null) return null;
+
+        var returnArray = [];
+
+        Object.keys(object).map(function(objectKey, index) {
+            var value = object[objectKey];
+            value.$key = objectKey;
+            returnArray.push(value);
+        });
+        return returnArray;
+      },
+
+      _loadInitialQuestions: function(){
+        //loads the initial questions
+        const thisElement = this;
+
+        //initial load
+        var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
+
+        query.once('value').then(function(snapshot) {
+
+          var tempquestions = snapshot.val();
+
+          if(tempquestions != null){
+
+            thisElement.questions = _objectToArray(tempquestions);
+
+            thisElement.fire('reloaded');
+            thisElement.newestQuestionId = thisElement.questions[thisElement.questions.length - 1].$key;
+
+          }
+
+            //for loading questions on lower threshold
+          if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
+
+          thisElement.$.spinner.removeAttribute('active');
+        });
+      },
+
+      _loadNewQuestions: function(){
+        //loads the newly posted questions and preppends it to this.questions
+        const thisElement = this;
+
+        //initial load
+        var query = this.$.questionQuery.ref.startAt(null, thisElement.newestQuestionId);
+
+        query.once('value').then(function(snapshot) {
+
+          var tempquestions = snapshot.val();
+
+          if(tempquestions != null){
+
+            thisElement.questions.unshift(_objectToArray(tempquestions));
+
+            thisElement.fire('reloaded');
+            thisElement.newestQuestionId = thisElement.questions[thisElement.questions.length - 1].$key;
+
+          }          
+        });
+      },
+
+      _loadMoreQuestions: function(){
+        //loads more questions and appends it to this.questions
+
+      },
+
       _onLowerThreshold: function(){
         const lowerThreshold = 500;
         thisElement = this;
         window.addEventListener('scroll', function(e) {
-          // console.log(this.classList.contains("iron-selected"));
           if(thisElement.canLoadMoreQuestions && thisElement.selected){
             var body = document.body; // For Chrome, Safari and Opera
             var html = document.documentElement; // Firefox and IE

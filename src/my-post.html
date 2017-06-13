@@ -22,6 +22,12 @@
       limit-to-last="1">
     </firebase-query>
 
+    <firebase-query
+      app-name="drink"
+      id="userQuery"
+      path="/users/[[user.uid]]">
+    </firebase-query>
+
     <style include="shared-styles">
       :host {
         display: block;

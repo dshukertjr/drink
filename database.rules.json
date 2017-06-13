@@ -68,7 +68,15 @@
               ".validate": "false"
             }
           }
+        },
+        "$other": {
+          ".validate": "false"
         }
+      }
+    },
+    "$other": {
+      "$other": {
+        ".validate": "false"
       }
     }
   }
