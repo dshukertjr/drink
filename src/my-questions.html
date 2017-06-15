@@ -119,9 +119,11 @@
 
     <ul id="question-list">
       <paper-button class="card" id="loadNew" on-tap="loadNew">Load [[newQuestionNum]] More Questions</paper-button>
+
       <template is="dom-repeat" items="[[questions]]" sort="_computeSort" as="question">
         <poll-result on-textarea-focused="togglePaperFab" class="question" questionkey="[[question.$key]]"></poll-result>
       </template>
+
     </ul>
 
     <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -179,13 +181,15 @@
       },
 
       ready: function(){
-        this._loadQuestions(false);
+        // this._loadQuestions(false);
+        this._loadInitialQuestions();
         this._onLowerThreshold();
       },
 
       loadNew: function(){
         this.$.loadNew.classList.remove('active');
-        this._loadQuestions(true);
+        // this._loadQuestions(true);
+        this._loadNewQuestions();
       },
 
       togglePaperFab: function(e){
@@ -234,45 +238,45 @@
         //need to remove the added event here in the future
       },
 
-      _loadQuestions: function(loadNew = false){
-        const spinner = this.$.spinner;
-        const thisElement = this;
+      // _loadQuestions: function(loadNew = false){
+      //   const spinner = this.$.spinner;
+      //   const thisElement = this;
 
-        //initial load
-        var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
+      //   //initial load
+      //   var query = this.$.questionQuery.ref.limitToLast(this.questionNum);
 
-        //if newestQuestionId is set and  load the ones up to that
-        if(this.newestQuestionId != null && loadNew === false) query = this.$.questionQuery.ref.endAt(null, this.newestQuestionId).limitToLast(this.questionNum);
+      //   //if newestQuestionId is set and  load the ones up to that
+      //   if(this.newestQuestionId != null && loadNew === false) query = this.$.questionQuery.ref.endAt(null, this.newestQuestionId).limitToLast(this.questionNum);
 
-        query.once('value').then(function(snapshot) {
+      //   query.once('value').then(function(snapshot) {
 
-          var tempquestions = snapshot.val();
+      //     var tempquestions = snapshot.val();
 
-          var questions=[];
+      //     var questions=[];
 
 
-          if(tempquestions != null){
+      //     if(tempquestions != null){
 
-            Object.keys(tempquestions).map(function(objectKey, index) {
-                var value = tempquestions[objectKey];
-                value.$key = objectKey;
-                questions.push(value);
-            });
+      //       Object.keys(tempquestions).map(function(objectKey, index) {
+      //           var value = tempquestions[objectKey];
+      //           value.$key = objectKey;
+      //           questions.push(value);
+      //       });
 
-            thisElement.fire('reloaded');
-            thisElement.newestQuestionId = questions[questions.length - 1].$key;
+      //       thisElement.fire('reloaded');
+      //       thisElement.newestQuestionId = questions[questions.length - 1].$key;
 
-            thisElement.questions = questions;
+      //       thisElement.questions = questions;
 
-          }
+      //     }
 
-            //for loading questions on lower threshold
-          if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
-          else thisElement.$.loadingSpinner.active = false;
+      //       //for loading questions on lower threshold
+      //     if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
+      //     else thisElement.$.loadingSpinner.active = false;
 
-          spinner.removeAttribute('active');
-        });
-      },
+      //     spinner.removeAttribute('active');
+      //   });
+      // },
 
       _objectToArray: function(object){
         //converts object to array
@@ -301,15 +305,16 @@
 
           if(tempquestions != null){
 
-            thisElement.questions = _objectToArray(tempquestions);
+            thisElement.questions = thisElement._objectToArray(tempquestions);
 
             thisElement.fire('reloaded');
+            thisElement.oldestQuestionId = thisElement.questions[0].$key;
             thisElement.newestQuestionId = thisElement.questions[thisElement.questions.length - 1].$key;
 
           }
 
-            //for loading questions on lower threshold
-          if(questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
+          //for loading questions on lower threshold
+          if(thisElement.questions.length == thisElement.questionNum) thisElement.canLoadMoreQuestions = true;
 
           thisElement.$.spinner.removeAttribute('active');
         });
@@ -328,7 +333,10 @@
 
           if(tempquestions != null){
 
-            thisElement.questions.unshift(_objectToArray(tempquestions));
+            tempquestions = thisElement._objectToArray(tempquestions);
+            tempquestions.shift();
+
+            thisElement.questions = tempquestions.concat(thisElement.questions);
 
             thisElement.fire('reloaded');
             thisElement.newestQuestionId = thisElement.questions[thisElement.questions.length - 1].$key;
@@ -339,7 +347,34 @@
 
       _loadMoreQuestions: function(){
         //loads more questions and appends it to this.questions
+        const thisElement = this;
 
+        //initial load
+        var query = this.$.questionQuery.ref.limitToLast(11).endAt(null, thisElement.oldestQuestionId);
+
+        query.once('value').then(function(snapshot) {
+
+          var tempquestions = snapshot.val();
+          // console.log(tempquestions);
+
+          if(tempquestions != null){
+
+            tempquestions = thisElement._objectToArray(tempquestions);
+            tempquestions.pop();
+
+            if(tempquestions.length > 0){
+              thisElement.questions = thisElement.questions.concat(tempquestions);
+
+              thisElement.oldestQuestionId = tempquestions[0].$key;
+
+              thisElement.canLoadMoreQuestions = true;
+            }else{
+              thisElement.canLoadMoreQuestions = false;
+              thisElement.$.loadingSpinner.active = false;
+            } 
+  
+          }          
+        });
       },
 
       _onLowerThreshold: function(){
@@ -357,11 +392,13 @@
             //to take in account for difference browsers
             var check = true;
             if( bodyScrollBottom < lowerThreshold ){
+              // thisElement._loadMoreQuestions();
               thisElement._loadMoreQuestions();
               check = false;
               thisElement.canLoadMoreQuestions = false;
             }
             if( htmlScrollBottom < lowerThreshold &&  check){
+              // thisElement._loadMoreQuestions();
               thisElement._loadMoreQuestions();
               thisElement.canLoadMoreQuestions = false;
             }
@@ -370,10 +407,10 @@
 
       },
 
-      _loadMoreQuestions: function(){
-        this.questionNum = this.questionNum + 10;
-        this._loadQuestions(false);
-      },
+      // _loadMoreQuestions: function(){
+      //   this.questionNum = this.questionNum + 10;
+      //   this._loadQuestions(false);
+      // },
 
       _computeSort: function(a, b) {
         // http://stackoverflow.com/questions/33953938/polymer-1-0-sorting-dom-repeat
